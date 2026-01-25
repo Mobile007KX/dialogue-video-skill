@@ -1,0 +1,25 @@
+{
+  "title": "命运反转",
+  "characters": {
+    "A": {"name": "橘猫", "video": "橘猫说话.mp4"},
+    "B": {"name": "白猫", "video": "白猫说话.mp4"}
+  },
+  "dialogue": [
+    {"audio": "01_橘猫.mp3", "character": "橘猫", "text": "媳妇儿...饿不饿？"},
+    {"audio": "02_白猫.mp3", "character": "白猫", "text": "饿...三天没吃东西了。"},
+    {"audio": "03_橘猫.mp3", "character": "橘猫", "text": "都怪我，当初炒币把钱全赔了。"},
+    {"audio": "04_白猫.mp3", "character": "白猫", "text": "别说了，说多了都是泪。"},
+    {"audio": "05_橘猫.mp3", "character": "橘猫", "text": "想当年，咱一顿饭小费就两万..."},
+    {"audio": "06_白猫.mp3", "character": "白猫", "text": "现在两块钱的馒头都买不起。"},
+    {"audio": "07_橘猫.mp3", "character": "橘猫", "text": "媳妇儿，你后悔跟我吗？"},
+    {"audio": "08_白猫.mp3", "character": "白猫", "text": "后悔啥？有钱的时候你对我好，没钱了你还对我好。"},
+    {"audio": "09_橘猫.mp3", "character": "橘猫", "text": "那是，哥就算要饭，也得让你先吃！"},
+    {"audio": "10_白猫.mp3", "character": "白猫", "text": "傻瓜...一起要饭也挺好的。"},
+    {"audio": "11_橘猫.mp3", "character": "橘猫", "text": "等哥东山再起，一定给你买最大的钻戒！"},
+    {"audio": "12_白猫.mp3", "character": "白猫", "text": "得了吧，我就要你这个人。"},
+    {"audio": "13_橘猫.mp3", "character": "橘猫", "text": "媳妇儿，咱虽然穷了，但咱还有彼此。"},
+    {"audio": "14_白猫.mp3", "character": "白猫", "text": "对，有你在，哪儿都是家。"},
+    {"audio": "15_橘猫.mp3", "character": "橘猫", "text": "媳妇儿...我爱你。"},
+    {"audio": "16_白猫.mp3", "character": "白猫", "text": "我也爱你，傻橘猫。"}
+  ]
+}

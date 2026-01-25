@@ -1,0 +1,29 @@
+{
+  "title": "学外语",
+  "characters": {
+    "A": {"name": "橘猫", "video": "橘猫说话.mp4"},
+    "B": {"name": "白猫", "video": "白猫说话.mp4"}
+  },
+  "dialogue": [
+    {"audio": "01_白猫.mp3", "character": "白猫", "text": "老公，咱这么有钱，是不是得学点英语？出国方便。"},
+    {"audio": "02_橘猫.mp3", "character": "橘猫", "text": "学那玩意儿干啥？有钱走哪儿都是VIP！"},
+    {"audio": "03_白猫.mp3", "character": "白猫", "text": "那人家跟你说话你咋办？"},
+    {"audio": "04_橘猫.mp3", "character": "橘猫", "text": "简单！掏钱，全世界都认识钱！"},
+    {"audio": "05_白猫.mp3", "character": "白猫", "text": "那上回在法国，你管人家服务员叫啥来着？"},
+    {"audio": "06_橘猫.mp3", "character": "橘猫", "text": "老妹！"},
+    {"audio": "07_白猫.mp3", "character": "白猫", "text": "人家法国人！"},
+    {"audio": "08_橘猫.mp3", "character": "橘猫", "text": "法国人咋了？她爱答不答，反正小费我给够了！"},
+    {"audio": "09_白猫.mp3", "character": "白猫", "text": "你给了多少？"},
+    {"audio": "10_橘猫.mp3", "character": "橘猫", "text": "一顿饭给了两万小费！"},
+    {"audio": "11_白猫.mp3", "character": "白猫", "text": "那服务员估计直接辞职了。"},
+    {"audio": "12_橘猫.mp3", "character": "橘猫", "text": "我跟你说，我就会三句英语，走遍天下都不怕！"},
+    {"audio": "13_白猫.mp3", "character": "白猫", "text": "哪三句？"},
+    {"audio": "14_橘猫.mp3", "character": "橘猫", "text": "第一句，Hello！"},
+    {"audio": "15_白猫.mp3", "character": "白猫", "text": "嗯。"},
+    {"audio": "16_橘猫.mp3", "character": "橘猫", "text": "第二句，Money！"},
+    {"audio": "17_白猫.mp3", "character": "白猫", "text": "然后呢？"},
+    {"audio": "18_橘猫.mp3", "character": "橘猫", "text": "第三句，How able? 不管她说多少，我就回一句：大饱！"},
+    {"audio": "19_白猫.mp3", "character": "白猫", "text": "你可真是有钱烧的。"},
+    {"audio": "20_橘猫.mp3", "character": "橘猫", "text": "烧的咋了？哥有！"}
+  ]
+}

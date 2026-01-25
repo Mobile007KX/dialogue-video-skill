@@ -1,0 +1,31 @@
+{
+  "title": "土味情话",
+  "characters": {
+    "A": {"name": "橘猫", "video": "橘猫说话.mp4"},
+    "B": {"name": "白猫", "video": "白猫说话.mp4"}
+  },
+  "dialogue": [
+    {"audio": "01_白猫.mp3", "character": "白猫", "text": "老公，今晚月亮真圆。"},
+    {"audio": "02_橘猫.mp3", "character": "橘猫", "text": "再圆能有你脸圆？"},
+    {"audio": "03_白猫.mp3", "character": "白猫", "text": "你说啥？！"},
+    {"audio": "04_橘猫.mp3", "character": "橘猫", "text": "我说你脸圆，圆的像月亮，让我想登陆！"},
+    {"audio": "05_白猫.mp3", "character": "白猫", "text": "还登陆？你咋不上天呢？"},
+    {"audio": "06_橘猫.mp3", "character": "橘猫", "text": "媳妇儿，你知道你像啥不？"},
+    {"audio": "07_白猫.mp3", "character": "白猫", "text": "像啥？"},
+    {"audio": "08_橘猫.mp3", "character": "橘猫", "text": "像WiFi！"},
+    {"audio": "09_白猫.mp3", "character": "白猫", "text": "啥意思？"},
+    {"audio": "10_橘猫.mp3", "character": "橘猫", "text": "走到哪我都想连着你！"},
+    {"audio": "11_白猫.mp3", "character": "白猫", "text": "切，油嘴滑舌。"},
+    {"audio": "12_橘猫.mp3", "character": "橘猫", "text": "媳妇儿，我给你讲个故事呗？"},
+    {"audio": "13_白猫.mp3", "character": "白猫", "text": "讲。"},
+    {"audio": "14_橘猫.mp3", "character": "橘猫", "text": "从前有座山，山里有个庙，庙里有个老和尚..."},
+    {"audio": "15_白猫.mp3", "character": "白猫", "text": "然后呢？"},
+    {"audio": "16_橘猫.mp3", "character": "橘猫", "text": "老和尚说，施主，你媳妇儿真好看。"},
+    {"audio": "17_白猫.mp3", "character": "白猫", "text": "滚！哪有这样的故事！"},
+    {"audio": "18_橘猫.mp3", "character": "橘猫", "text": "你笑了！哥就喜欢看你笑！"},
+    {"audio": "19_白猫.mp3", "character": "白猫", "text": "讨厌..."},
+    {"audio": "20_橘猫.mp3", "character": "橘猫", "text": "媳妇儿，躺这儿看星星，哥觉得这辈子值了！"},
+    {"audio": "21_白猫.mp3", "character": "白猫", "text": "就知道说好听的。"},
+    {"audio": "22_橘猫.mp3", "character": "橘猫", "text": "哥说的都是真的！有钱算啥？有你才算有！"}
+  ]
+}

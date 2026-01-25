@@ -1,0 +1,13 @@
+# 临时文件
+temp_segments/
+*.pyc
+__pycache__/
+.DS_Store
+
+# 大文件（视频/音频素材）
+*.mp4
+*.mp3
+*.wav
+
+# 保留起始帧图片
+!起始帧.*
