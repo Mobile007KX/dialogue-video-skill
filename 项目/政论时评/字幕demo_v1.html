@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>政论时评 - 字幕Demo (9:16)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        /* 9:16 竖屏容器 */
+        .video-container {
+            width: 405px;  /* 9单位 */
+            height: 720px; /* 16单位 */
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
+
+        /* 安全区标记（开发时可见） */
+        .safe-area {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            right: 0;
+            bottom: 120px;
+            border: 1px dashed rgba(255,255,255,0.1);
+            pointer-events: none;
+        }
+
+        /* 字幕层 */
+        .subtitle {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .subtitle.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .subtitle.fade-out {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        /* 开场金句 - 超大字号 + 对仗 */
+        .golden-opener {
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 0 40px;
+        }
+
+        .golden-opener .line {
+            font-size: 36px;
+            font-weight: 900;
+            line-height: 1.6;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(255,215,0,0.5);
+        }
+
+        .golden-opener .line:first-child {
+            color: #FFD700;
+            margin-bottom: 20px;
+        }
+
+        .golden-opener .line:last-child {
+            color: #FF6B6B;
+        }
+
+        /* 标题式字幕 */
+        .title-style {
+            top: 180px;
+            padding: 0 40px;
+        }
+
+        .title-style h1 {
+            font-size: 42px;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.6);
+        }
+
+        .title-style .subtitle-text {
+            font-size: 20px;
+            color: #aaa;
+            font-weight: 300;
+        }
+
+        /* 数据展示 - 大数字 + 滚动动画 */
+        .data-highlight {
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 0 40px;
+        }
+
+        .data-highlight .label {
+            font-size: 22px;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+
+        .data-highlight .number {
+            font-size: 72px;
+            font-weight: 900;
+            color: #FF4757;
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 0 30px rgba(255,71,87,0.6);
+        }
+
+        .data-highlight .unit {
+            font-size: 28px;
+            color: #FF4757;
+            margin-left: 10px;
+        }
+
+        /* 编号递进 - 左对齐 */
+        .numbered-point {
+            top: 200px;
+            left: 40px;
+            right: 40px;
+            text-align: left;
+        }
+
+        .numbered-point .number {
+            font-size: 48px;
+            font-weight: 900;
+            color: #4ECDC4;
+            display: inline-block;
+            margin-right: 15px;
+        }
+
+        .numbered-point .text {
+            font-size: 24px;
+            line-height: 1.6;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        /* 关键转折 - 全屏红底白字 */
+        .critical-turn {
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #FF4757;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 50px;
+        }
+
+        .critical-turn .text {
+            font-size: 38px;
+            font-weight: 900;
+            color: #fff;
+            line-height: 1.5;
+            text-align: center;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* 升华段落 - 居中 + 行间距大 */
+        .philosophy {
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 0 50px;
+        }
+
+        .philosophy .text {
+            font-size: 26px;
+            line-height: 2;
+            color: #fff;
+            font-weight: 400;
+            text-align: center;
+        }
+
+        .philosophy .highlight {
+            color: #FFD700;
+            font-weight: 700;
+        }
+
+        /* 安全收尾 - 小字快速滚过 */
+        .safe-ending {
+            bottom: 140px;
+            padding: 0 40px;
+        }
+
+        .safe-ending .text {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.8;
+            text-align: center;
+            font-weight: 300;
+        }
+
+        /* 打字机效果 */
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        .typewriter {
+            overflow: hidden;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        /* 数字滚动动画 */
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .count-up {
+            animation: countUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 控制按钮 */
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+        }
+
+        .controls button {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .controls button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* 进度指示器 */
+        .progress {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <!-- 安全区标记 -->
+        <div class="safe-area"></div>
+
+        <!-- 进度指示 -->
+        <div class="progress">场景 <span id="current-scene">1</span> / 8</div>
+
+        <!-- 场景1: 开场金句（对仗式） -->
+        <div class="subtitle golden-opener" data-scene="1">
+            <div class="line">储蓄节节高</div>
+            <div class="line">负债层层压</div>
+        </div>
+
+        <!-- 场景2: 标题式引入 -->
+        <div class="subtitle title-style" data-scene="2">
+            <h1>2025年人均存款</h1>
+            <div class="subtitle-text">再创历史新高</div>
+        </div>
+
+        <!-- 场景3: 数据冲击 -->
+        <div class="subtitle data-highlight" data-scene="3">
+            <div class="label">全国居民人均存款余额</div>
+            <div class="number count-up">
+                <span class="counter" data-target="136800">0</span>
+                <span class="unit">元</span>
+            </div>
+        </div>
+
+        <!-- 场景4: 编号递进 - 第一 -->
+        <div class="subtitle numbered-point" data-scene="4">
+            <span class="number">第一</span>
+            <div class="text">表面上看是储蓄意愿增强<br>实际上是消费信心不足</div>
+        </div>
+
+        <!-- 场景5: 编号递进 - 第二 -->
+        <div class="subtitle numbered-point" data-scene="5">
+            <span class="number">第二</span>
+            <div class="text">钱不是存在银行里<br>而是躲在银行里</div>
+        </div>
+
+        <!-- 场景6: 关键转折 -->
+        <div class="subtitle critical-turn" data-scene="6">
+            <div class="text">但这还并不是<br>最重要的</div>
+        </div>
+
+        <!-- 场景7: 升华 -->
+        <div class="subtitle philosophy" data-scene="7">
+            <div class="text">
+                真正重要的是<br>
+                <span class="highlight">守住现金流</span><br>
+                宁可错过，也不能犯错
+            </div>
+        </div>
+
+        <!-- 场景8: 安全收尾 -->
+        <div class="subtitle safe-ending" data-scene="8">
+            <div class="text">
+                相信通过我们的不断努力<br>
+                我们的未来会越来越好
+            </div>
+        </div>
+
+        <!-- 控制按钮 -->
+        <div class="controls">
+            <button onclick="prevScene()">上一幕</button>
+            <button onclick="playAuto()">自动播放</button>
+            <button onclick="nextScene()">下一幕</button>
+            <button onclick="restart()">重新开始</button>
+        </div>
+    </div>
+
+    <script>
+        let currentScene = 0;
+        const totalScenes = 8;
+        let autoPlayInterval = null;
+
+        // 显示指定场景
+        function showScene(sceneNum) {
+            // 隐藏所有场景
+            document.querySelectorAll('.subtitle').forEach(sub => {
+                sub.classList.remove('active');
+                sub.classList.add('fade-out');
+            });
+
+            // 延迟显示新场景（等待淡出完成）
+            setTimeout(() => {
+                document.querySelectorAll('.subtitle').forEach(sub => {
+                    sub.classList.remove('fade-out');
+                });
+
+                const targetScene = document.querySelector(`[data-scene="${sceneNum}"]`);
+                if (targetScene) {
+                    targetScene.classList.add('active');
+
+                    // 如果是数据场景，触发数字滚动动画
+                    if (sceneNum === 3) {
+                        animateCounter();
+                    }
+                }
+
+                // 更新进度
+                document.getElementById('current-scene').textContent = sceneNum;
+            }, 300);
+        }
+
+        // 数字滚动动画
+        function animateCounter() {
+            const counter = document.querySelector('.counter');
+            const target = parseInt(counter.getAttribute('data-target'));
+            const duration = 1500; // 1.5秒
+            const steps = 60;
+            const increment = target / steps;
+            let current = 0;
+            let step = 0;
+
+            const timer = setInterval(() => {
+                step++;
+                current += increment;
+                if (step >= steps) {
+                    counter.textContent = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    counter.textContent = Math.floor(current).toLocaleString();
+                }
+            }, duration / steps);
+        }
+
+        // 下一幕
+        function nextScene() {
+            if (currentScene < totalScenes) {
+                currentScene++;
+                showScene(currentScene);
+            }
+        }
+
+        // 上一幕
+        function prevScene() {
+            if (currentScene > 1) {
+                currentScene--;
+                showScene(currentScene);
+            }
+        }
+
+        // 自动播放
+        function playAuto() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+                return;
+            }
+
+            // 定义每个场景的停留时间（毫秒）
+            const sceneDurations = [
+                0,     // 场景0（不存在）
+                3000,  // 场景1: 开场金句 - 3秒
+                2500,  // 场景2: 标题 - 2.5秒
+                3500,  // 场景3: 数据 - 3.5秒（含动画）
+                3000,  // 场景4: 第一 - 3秒
+                3000,  // 场景5: 第二 - 3秒
+                2500,  // 场景6: 转折 - 2.5秒
+                4000,  // 场景7: 升华 - 4秒
+                3000   // 场景8: 收尾 - 3秒
+            ];
+
+            currentScene = 0;
+
+            function playNext() {
+                if (currentScene < totalScenes) {
+                    currentScene++;
+                    showScene(currentScene);
+
+                    autoPlayInterval = setTimeout(playNext, sceneDurations[currentScene]);
+                } else {
+                    autoPlayInterval = null;
+                }
+            }
+
+            playNext();
+        }
+
+        // 重新开始
+        function restart() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            }
+            currentScene = 0;
+            showScene(1);
+            currentScene = 1;
+        }
+
+        // 初始化：显示第一幕
+        window.onload = function() {
+            showScene(1);
+            currentScene = 1;
+        };
+
+        // 键盘控制
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') nextScene();
+            if (e.key === 'ArrowLeft') prevScene();
+            if (e.key === ' ') playAuto();
+        });
+    </script>
+</body>
+</html>

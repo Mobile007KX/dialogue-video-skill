@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>取消中考 - V6 UI Pro Max 优化版</title>
+
+<!-- Google Fonts: Noto Sans SC (专业中文字体) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+<style>
+/*
+  V6 设计规范（基于 UI Pro Max 专业建议）
+  ========================================
+
+  UI风格：Flat Design
+  配色方案：News/Media Platform
+  字体：Noto Sans SC
+  布局：垂直居中对齐
+*/
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0F172A;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 9:16 画布 */
+.screen {
+  width: 405px;
+  height: 720px;
+  position: relative;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+}
+
+/* 背景图层 */
+.bg-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bg-img {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.35) saturate(1.2);
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.bg-img.on {
+  opacity: 1;
+}
+
+/* 场景容器 */
+.scene {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;  /* 垂直居中对齐 */
+  padding: 80px 40px 100px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.scene.on {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ============ 文字样式层级 ============ */
+
+/* 超大标题 - 数字展示 */
+.display {
+  font-size: 80px;
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+/* 一级标题 */
+.t1 {
+  font-size: 52px;
+  font-weight: 900;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
+/* 二级标题 */
+.t2 {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+/* 正文 */
+.t3 {
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+
+/* 辅助文字 */
+.t4 {
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+
+/* ============ 配色系统（News/Media） ============ */
+
+/* 主色 - 专业蓝 */
+.c-primary {
+  color: #3B82F6;
+}
+
+/* 强调色 - 橙色 */
+.c-accent {
+  color: #F97316;
+}
+
+/* 白色 - 主要文字 */
+.c-white {
+  color: #FFFFFF;
+}
+
+/* 浅色 - 次要文字 */
+.c-light {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* 黄色 - 数据高亮 */
+.c-yellow {
+  color: #FBBF24;
+}
+
+/* 红色 - 警示 */
+.c-red {
+  color: #EF4444;
+}
+
+/* 暗淡色 - 结尾语 */
+.c-dim {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ============ 文字描边（优化对比度） ============ */
+
+.stroke {
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.8),
+    0 0 3px rgba(0, 0, 0, 0.9),
+    1px 1px 0 rgba(0, 0, 0, 0.5),
+    -1px -1px 0 rgba(0, 0, 0, 0.5),
+    1px -1px 0 rgba(0, 0, 0, 0.5),
+    -1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.stroke-heavy {
+  -webkit-text-stroke: 2px rgba(0, 0, 0, 0.8);
+  paint-order: stroke fill;
+  text-shadow:
+    0 3px 12px rgba(0, 0, 0, 0.9),
+    0 0 4px rgba(0, 0, 0, 1);
+}
+
+/* ============ 色块标签 ============ */
+
+.tag {
+  display: inline-block;
+  padding: 8px 24px;
+  border-radius: 6px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.tag-primary {
+  background: linear-gradient(135deg, #3B82F6, #2563EB);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.tag-accent {
+  background: linear-gradient(135deg, #F97316, #EA580C);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+}
+
+.tag-yellow {
+  background: linear-gradient(135deg, #FBBF24, #F59E0B);
+  color: #000000;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+}
+
+.tag-dark {
+  background: rgba(15, 23, 42, 0.85);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+/* ============ 动效（Flat Design原则：简洁快速） ============ */
+
+.fade {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.fade.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.pop {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pop.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ============ 间距系统（8px基准） ============ */
+
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 16px; }
+.mt-3 { margin-top: 24px; }
+.mt-4 { margin-top: 32px; }
+.mt-5 { margin-top: 40px; }
+.mt-6 { margin-top: 48px; }
+
+/* ============ 底部控制条 ============ */
+
+.bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 24px 12px;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+}
+
+.progress-track {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #3B82F6, #60A5FA);
+  border-radius: 2px;
+  transition: width 0.3s linear;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.bar-row button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.2s;
+  font-family: 'Noto Sans SC', sans-serif;
+}
+
+.bar-row button:hover {
+  color: #FFFFFF;
+}
+
+.bar-row .timer {
+  margin-left: auto;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+</style>
+</head>
+
+<body>
+<div class="screen">
+
+  <!-- 背景图层 -->
+  <div class="bg-layer">
+    <div class="bg-img" data-bg="1" style="background-image:url('../gallery/gallery_color_03.jpg')"></div>
+    <div class="bg-img" data-bg="2" style="background-image:url('../gallery/gallery_color_07.jpg')"></div>
+    <div class="bg-img" data-bg="3" style="background-image:url('../gallery/gallery_color_12.jpg')"></div>
+    <div class="bg-img" data-bg="4" style="background-image:url('../gallery/gallery_color_01.jpg')"></div>
+    <div class="bg-img" data-bg="5" style="background-image:url('../gallery/gallery_color_15.jpg')"></div>
+    <div class="bg-img" data-bg="6" style="background-image:url('../gallery/gallery_color_09.jpg')"></div>
+    <div class="bg-img" data-bg="7" style="background-image:url('../gallery/gallery_color_05.jpg')"></div>
+    <div class="bg-img" data-bg="8" style="background-image:url('../gallery/gallery_color_18.jpg')"></div>
+    <div class="bg-img" data-bg="9" style="background-image:url('../gallery/gallery_color_10.jpg')"></div>
+    <div class="bg-img" data-bg="10" style="background-image:url('../gallery/gallery_color_14.jpg')"></div>
+    <div class="bg-img" data-bg="11" style="background-image:url('../gallery/gallery_color_20.jpg')"></div>
+  </div>
+
+  <!-- S1：开场金句 -->
+  <div class="scene" id="s1">
+    <div class="t1 fade"><span class="tag tag-yellow">教育不是淘汰人的筛子</span></div>
+    <div class="t2 c-white stroke fade mt-3">而是托举人的梯子</div>
+  </div>
+
+  <!-- S2：事实引入 -->
+  <div class="scene" id="s2">
+    <div class="t2 c-light stroke fade">2025年浙江嵊泗县</div>
+    <div class="t2 c-white stroke fade mt-2">率先取消中考选拔</div>
+    <div class="t2 c-yellow stroke fade mt-2">266名全部录取 百分之百</div>
+  </div>
+
+  <!-- S3：核心概念 -->
+  <div class="scene" id="s3">
+    <div class="t2 c-light stroke fade">为什么？四个字</div>
+    <div class="t1 pop mt-3"><span class="tag tag-accent">供需逆转</span></div>
+  </div>
+
+  <!-- S4：数据冲击1 -->
+  <div class="scene" id="s4">
+    <div class="t2 c-light stroke fade">第一 学生在消失</div>
+    <div class="t2 c-white stroke fade mt-2">2016年出生1786万</div>
+    <div class="display c-red stroke-heavy pop mt-3">
+      <span id="counter1">0</span><span style="font-size:40px">万</span>
+    </div>
+    <div class="t2 c-light stroke fade mt-2">2025年仅</div>
+  </div>
+
+  <!-- S5：数据冲击2 -->
+  <div class="scene" id="s5">
+    <div class="t2 c-light stroke fade">2024年关掉</div>
+    <div class="t2 c-white stroke fade mt-2">2.11万所幼儿园</div>
+    <div class="display c-yellow stroke-heavy pop mt-3">
+      <span id="counter2">0</span><span style="font-size:40px">所</span>
+    </div>
+    <div class="t2 c-light stroke fade mt-2">每天消失</div>
+  </div>
+
+  <!-- S6：第二层解读 -->
+  <div class="scene" id="s6">
+    <div class="t2 c-light stroke fade">第二 学校在空</div>
+    <div class="t2 c-white stroke fade mt-2">未来十年</div>
+    <div class="t2 c-yellow stroke fade mt-2">适龄人口将减少50%-60%</div>
+  </div>
+
+  <!-- S7：强调 -->
+  <div class="scene" id="s7">
+    <div class="t2 c-light stroke fade">学校不是被改革掉的</div>
+    <div class="t1 c-yellow stroke pop mt-3">是被"空"掉的</div>
+  </div>
+
+  <!-- S8：对比观点 -->
+  <div class="scene" id="s8">
+    <div class="t1 fade mb-3"><span class="tag tag-primary">第三</span></div>
+    <div class="t2 c-light stroke fade mt-2">月薪五千觉得读大学没用</div>
+    <div class="t2 c-yellow stroke fade mt-2">月薪五万告诉你</div>
+    <div class="t2 c-yellow stroke fade mt-2">教育永远有用</div>
+  </div>
+
+  <!-- S9：转折 -->
+  <div class="scene" id="s9">
+    <div class="t2 c-light stroke fade">但这还并不是</div>
+    <div class="t1 c-white stroke pop mt-2">最重要的</div>
+  </div>
+
+  <!-- S10：核心观点 -->
+  <div class="scene" id="s10">
+    <div class="t1 c-yellow stroke-heavy pop">教育是阳光</div>
+    <div class="t2 c-white stroke fade mt-4">应该照到每一个人身上</div>
+  </div>
+
+  <!-- S11：收尾 -->
+  <div class="scene" id="s11">
+    <div class="t2 c-white stroke fade">15岁的失败不叫失败</div>
+    <div class="t2 c-yellow stroke fade mt-2">叫还没开始</div>
+    <div class="t3 c-dim stroke fade mt-4">相信经过不断努力</div>
+    <div class="t3 c-dim stroke fade mt-1">教育一定越来越公平</div>
+    <div class="t3 c-dim stroke fade mt-1">未来一定越来越好</div>
+  </div>
+
+  <!-- 底部控制条 -->
+  <div class="bar">
+    <div class="progress-track" id="progressTrack">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="bar-row">
+      <button id="playBtn">播放</button>
+      <button id="restartBtn">重播</button>
+      <span class="timer"><span id="currentTime">0.0</span>s / <span id="totalTime">48.6</span>s</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// 时间轴配置（根据原始timeline调整）
+const timeline = [
+  [1, 0.00, 3.17, [[0, '.fade', 'show'], [0.4, '.fade:nth-child(2)', 'show']]],
+  [2, 3.55, 6.43, [[0, '.fade', 'show'], [0.4, '.fade:nth-child(2)', 'show'], [0.8, '.fade:nth-child(3)', 'show']]],
+  [3, 10.00, 2.75, [[0, '.fade', 'show'], [0.4, '.pop', 'show']]],
+  [4, 12.99, 7.47, [[0, '.fade', 'show'], [0.4, '.fade:nth-child(2)', 'show'], [0.8, '.pop', 'show'], [1.2, '.fade:nth-child(4)', 'show']]],
+  [5, 20.45, 4.05, [[0, '.fade', 'show'], [0.4, '.fade:nth-child(2)', 'show'], [0.8, '.pop', 'show'], [1.2, '.fade:nth-child(4)', 'show']]],
+  [6, 24.75, 5.52, [[0, '.fade', 'show'], [0.4, '.fade:nth-child(2)', 'show'], [0.8, '.fade:nth-child(3)', 'show']]],
+  [7, 30.69, 2.16, [[0, '.fade', 'show'], [0.4, '.pop', 'show']]],
+  [8, 33.20, 5.41, [[0, '.fade', 'show'], [0.4, '.fade:nth-child(2)', 'show'], [0.8, '.fade:nth-child(3)', 'show'], [1.2, '.fade:nth-child(4)', 'show']]],
+  [9, 39.02, 2.52, [[0, '.fade', 'show'], [0.4, '.pop', 'show']]],
+  [10, 41.87, 2.84, [[0, '.pop', 'show'], [0.5, '.fade', 'show']]],
+  [11, 45.00, 3.58, [[0, '.fade', 'show'], [0.3, '.fade:nth-child(2)', 'show'], [0.7, '.fade:nth-child(3)', 'show'], [1.0, '.fade:nth-child(4)', 'show'], [1.3, '.fade:nth-child(5)', 'show']]]
+];
+
+const TOTAL_DURATION = 48.58;
+let currentTime = 0;
+let rafId = null;
+let startTimestamp = null;
+let isPlaying = false;
+
+const scenes = document.querySelectorAll('.scene');
+const bgImgs = document.querySelectorAll('.bg-img');
+const playBtn = document.getElementById('playBtn');
+const restartBtn = document.getElementById('restartBtn');
+const progressFill = document.getElementById('progressFill');
+const progressTrack = document.getElementById('progressTrack');
+const currentTimeEl = document.getElementById('currentTime');
+
+// 数字滚动动画
+function animateCounter(element, target, duration) {
+  const start = 0;
+  const startTime = performance.now();
+
+  function update(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const easeProgress = 1 - Math.pow(1 - progress, 3);
+    const value = Math.floor(start + (target - start) * easeProgress);
+    element.textContent = value.toLocaleString('zh-CN');
+
+    if (progress < 1) {
+      requestAnimationFrame(update);
+    }
+  }
+
+  requestAnimationFrame(update);
+}
+
+// 渲染当前帧
+function render(time) {
+  currentTime = time;
+  currentTimeEl.textContent = time.toFixed(1);
+  progressFill.style.width = `${(time / TOTAL_DURATION) * 100}%`;
+
+  timeline.forEach(([sceneIdx, start, duration, animations], idx) => {
+    const scene = scenes[sceneIdx - 1];
+    const bgImg = bgImgs[sceneIdx - 1];
+    const inRange = time >= start && time < start + duration;
+
+    if (inRange) {
+      scene.classList.add('on');
+      bgImg.classList.add('on');
+
+      animations.forEach(([delay, selector, className]) => {
+        if (time >= start + delay) {
+          const elements = scene.querySelectorAll(selector);
+          elements.forEach(el => el.classList.add(className));
+        }
+      });
+
+      // 数字动画触发
+      if (sceneIdx === 4 && time >= start + 0.8 && time < start + 0.9) {
+        animateCounter(document.getElementById('counter1'), 792, 1500);
+      }
+      if (sceneIdx === 5 && time >= start + 0.8 && time < start + 0.9) {
+        animateCounter(document.getElementById('counter2'), 58, 1200);
+      }
+    } else {
+      scene.classList.remove('on');
+      bgImg.classList.remove('on');
+    }
+  });
+
+  if (time >= TOTAL_DURATION) {
+    stop();
+  }
+}
+
+// 动画循环
+function tick(timestamp) {
+  if (!startTimestamp) startTimestamp = timestamp;
+  const elapsed = (timestamp - startTimestamp) / 1000;
+  render(elapsed);
+  if (isPlaying) {
+    rafId = requestAnimationFrame(tick);
+  }
+}
+
+// 播放控制
+function play() {
+  if (isPlaying) return;
+  isPlaying = true;
+  playBtn.textContent = '暂停';
+  startTimestamp = performance.now() - currentTime * 1000;
+  rafId = requestAnimationFrame(tick);
+}
+
+function pause() {
+  if (!isPlaying) return;
+  isPlaying = false;
+  playBtn.textContent = '播放';
+  if (rafId) cancelAnimationFrame(rafId);
+}
+
+function stop() {
+  pause();
+  currentTime = 0;
+  render(0);
+  scenes.forEach(s => {
+    s.classList.remove('on');
+    s.querySelectorAll('.show').forEach(el => el.classList.remove('show'));
+  });
+  bgImgs.forEach(b => b.classList.remove('on'));
+}
+
+function restart() {
+  stop();
+  setTimeout(play, 100);
+}
+
+function seek(time) {
+  const wasPlaying = isPlaying;
+  pause();
+  currentTime = time;
+  startTimestamp = null;
+
+  scenes.forEach(s => {
+    s.classList.remove('on');
+    s.querySelectorAll('.show').forEach(el => el.classList.remove('show'));
+  });
+  bgImgs.forEach(b => b.classList.remove('on'));
+
+  render(time);
+  if (wasPlaying) play();
+}
+
+// 事件监听
+playBtn.addEventListener('click', () => {
+  if (isPlaying) pause();
+  else play();
+});
+
+restartBtn.addEventListener('click', restart);
+
+progressTrack.addEventListener('click', (e) => {
+  const rect = progressTrack.getBoundingClientRect();
+  const percent = (e.clientX - rect.left) / rect.width;
+  seek(percent * TOTAL_DURATION);
+});
+
+// 键盘控制
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space') {
+    e.preventDefault();
+    if (isPlaying) pause();
+    else play();
+  }
+  if (e.code === 'KeyR') restart();
+});
+
+// 初始化
+render(0);
+</script>
+
+</body>
+</html>

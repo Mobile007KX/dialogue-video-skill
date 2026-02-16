@@ -1,0 +1,116 @@
+{
+  "title": "取消中考",
+  "voice": "Kevin",
+  "speed": 1.5,
+  "tts_text": "教育不是淘汰人的筛子，而是托举人的梯子。2025年，浙江嵊泗县率先取消中考选拔，266名初三毕业生，全部录取，百分之百。为什么？四个字，供需逆转。第一，学生在消失。2016年出生人口1786万，2025年只有792万，直接腰斩。2024年一年关掉2.11万所幼儿园，每天消失58所。第二，学校在空。未来十年，义务教育适龄人口将减少50%到60%。学校不是被改革掉的，是被空掉的。第三，月薪五千的觉得读大学没用，月薪五万的告诉你教育永远有用。15岁的一次考试分数，不足以定义他能走多远。但这还并不是最重要的。真正重要的是，教育是阳光，应该照到每一个人身上。15岁的失败不叫失败，叫还没开始。相信经过不断努力，我们的教育一定会越来越公平，孩子们的未来一定越来越好。",
+  "scenes": [
+    {
+      "id": "s1",
+      "type": "hook",
+      "bg": 1,
+      "lines": [
+        {"text": "教育不是淘汰人的筛子", "style": "block-yellow", "anim": "fade"},
+        {"text": "而是托举人的梯子", "style": "white-stroke", "anim": "fade"}
+      ]
+    },
+    {
+      "id": "s2",
+      "type": "fact",
+      "bg": 2,
+      "lines": [
+        {"text": "2025年浙江嵊泗县", "style": "white", "anim": "fade"},
+        {"text": "率先取消中考选拔", "style": "white", "anim": "fade"},
+        {"text": "266名全部录取 百分之百", "style": "yellow", "anim": "fade"}
+      ]
+    },
+    {
+      "id": "s3",
+      "type": "hook",
+      "bg": 3,
+      "lines": [
+        {"text": "为什么？四个字", "style": "white-stroke", "anim": "fade"},
+        {"text": "供需逆转", "style": "block-yellow", "anim": "pop"}
+      ]
+    },
+    {
+      "id": "s4",
+      "type": "data",
+      "bg": 4,
+      "lines": [
+        {"text": "第一 学生在消失", "style": "white", "anim": "fade"},
+        {"text": "2016年出生1786万", "style": "white", "anim": "fade"}
+      ],
+      "counter": {"id": "counter1", "target": 792, "suffix": "万", "label": "2025年仅", "color": "red"}
+    },
+    {
+      "id": "s5",
+      "type": "data",
+      "bg": 5,
+      "lines": [
+        {"text": "2024年关掉", "style": "white", "anim": "fade"},
+        {"text": "2.11万所幼儿园", "style": "white", "anim": "fade"}
+      ],
+      "counter": {"id": "counter2", "target": 58, "suffix": "所", "label": "每天消失", "color": "yellow"}
+    },
+    {
+      "id": "s6",
+      "type": "contrast",
+      "bg": 6,
+      "lines": [
+        {"text": "第二 学校在空", "style": "white", "anim": "fade"},
+        {"text": "未来十年", "style": "white", "anim": "fade"},
+        {"text": "适龄人口将减少50%-60%", "style": "yellow", "anim": "fade"}
+      ]
+    },
+    {
+      "id": "s7",
+      "type": "emphasis",
+      "bg": 7,
+      "lines": [
+        {"text": "学校不是被改革掉的", "style": "white-stroke", "anim": "fade"},
+        {"text": "是被\"空\"掉的", "style": "yellow-big", "anim": "pop"}
+      ]
+    },
+    {
+      "id": "s8",
+      "type": "contrast",
+      "bg": 8,
+      "lines": [
+        {"text": "第三", "style": "block-yellow", "anim": "fade"},
+        {"text": "月薪五千觉得读大学没用", "style": "white", "anim": "fade"},
+        {"text": "月薪五万告诉你", "style": "yellow", "anim": "fade"},
+        {"text": "教育永远有用", "style": "yellow", "anim": "fade"}
+      ]
+    },
+    {
+      "id": "s9",
+      "type": "transition",
+      "bg": 9,
+      "lines": [
+        {"text": "但这还并不是", "style": "white-stroke", "anim": "fade"},
+        {"text": "最重要的", "style": "white-big", "anim": "fade"}
+      ]
+    },
+    {
+      "id": "s10",
+      "type": "key",
+      "bg": 10,
+      "lines": [
+        {"text": "教育是阳光", "style": "yellow-big", "anim": "pop"},
+        {"text": "应该照到每一个人身上", "style": "white-stroke", "anim": "fade"}
+      ]
+    },
+    {
+      "id": "s11",
+      "type": "closing",
+      "bg": 11,
+      "lines": [
+        {"text": "15岁的失败不叫失败", "style": "white", "anim": "fade"},
+        {"text": "叫还没开始", "style": "yellow", "anim": "fade"},
+        {"text": "相信经过不断努力", "style": "white-dim", "anim": "fade"},
+        {"text": "教育一定越来越公平", "style": "white-dim", "anim": "fade"},
+        {"text": "未来一定越来越好", "style": "white-dim", "anim": "fade"}
+      ]
+    }
+  ]
+}

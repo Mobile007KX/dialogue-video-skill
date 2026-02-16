@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>政论时评 - 字幕演示 V3</title>
+<style>
+/*
+  设计体系 V3
+  ============
+  字号：H1=72px  H2=48px  H3=36px（仅3级）
+  色彩：白#EDEDED(主)  金#D4A843(强调)  暗灰#444(弱化)
+  法则：70%黑底  25%白字  5%金色
+  安全区：上80px  下200px（抖音评论区）
+  每屏：最多4行  每行最多12字
+  动效：仅3种（淡入上移 / 缩放弹入 / 逐字打入）
+*/
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  background:#000;
+  display:flex;justify-content:center;align-items:center;
+  min-height:100vh;
+  font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ============ 9:16 画布 ============ */
+.screen{
+  width:405px;height:720px;
+  position:relative;overflow:hidden;
+  background:#000;
+  box-shadow:0 0 80px rgba(0,0,0,.9);
+}
+
+/* ============ 毛玻璃背景层 ============ */
+.bg-layer{
+  position:absolute;inset:0;z-index:0;
+  overflow:hidden;
+}
+.bg-img{
+  position:absolute;inset:-40px;
+  background-size:cover;
+  background-position:center;
+  filter:blur(28px) brightness(0.2) saturate(1.2);
+  opacity:0;
+  transition:opacity 1.5s ease;
+  animation:kb 14s ease-in-out infinite alternate;
+}
+.bg-img.on{opacity:1}
+
+@keyframes kb{
+  0%{transform:scale(1.08) translate(0,0)}
+  100%{transform:scale(1.18) translate(-6px,-4px)}
+}
+
+/* ============ 场景容器 ============ */
+.scene{
+  position:absolute;inset:0;z-index:1;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  /* 安全区：上80 下200（抖音评论+点赞遮挡）左右48 */
+  padding:80px 48px 200px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .5s ease;
+}
+.scene.on{opacity:1;pointer-events:auto}
+
+/* ============ 字号体系（仅3级） ============ */
+
+/* H1：冲击力 — 金句/转折/大数据 */
+.h1{
+  font-size:72px;
+  font-weight:900;
+  line-height:1.3;
+  letter-spacing:4px;
+  color:#EDEDED;
+}
+
+/* H2：主体 — 观点/叙述/编号 */
+.h2{
+  font-size:48px;
+  font-weight:700;
+  line-height:1.5;
+  letter-spacing:3px;
+  color:#EDEDED;
+}
+
+/* H3：辅助 — 标注/来源/收尾 */
+.h3{
+  font-size:36px;
+  font-weight:400;
+  line-height:1.6;
+  letter-spacing:2px;
+  color:rgba(237,237,237,.6);
+}
+
+/* ============ 色彩（仅2色+弱化灰） ============ */
+.gold{color:#D4A843}
+.dim{color:rgba(237,237,237,.35)}
+
+/* ============ 布局 ============ */
+.center{text-align:center}
+.left{text-align:left;align-self:stretch}
+.gap-s{margin-top:16px}
+.gap-m{margin-top:28px}
+
+/* ============ 动效（仅3种） ============ */
+
+/* 淡入上移 */
+.fade{
+  opacity:0;
+  transform:translateY(20px);
+  transition:all .6s cubic-bezier(.23,1,.32,1);
+}
+.fade.show{opacity:1;transform:translateY(0)}
+
+/* 缩放弹入 */
+.pop{
+  opacity:0;
+  transform:scale(.65);
+  transition:all .5s cubic-bezier(.34,1.56,.64,1);
+}
+.pop.show{opacity:1;transform:scale(1)}
+
+/* 逐字打入 */
+.ch{
+  display:inline-block;
+  opacity:0;
+  transform:translateY(10px);
+  transition:all .12s ease;
+}
+.ch.show{opacity:1;transform:translateY(0)}
+
+/* 数字等宽 */
+.num{font-variant-numeric:tabular-nums}
+
+/* 震动（仅转折用） */
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-5px)}
+  75%{transform:translateX(5px)}
+}
+.shake{animation:shake .35s ease}
+
+/* 发光（仅升华核心词） */
+@keyframes glow{
+  0%,100%{text-shadow:0 0 8px rgba(212,168,67,.2)}
+  50%{text-shadow:0 0 24px rgba(212,168,67,.6),0 0 48px rgba(212,168,67,.2)}
+}
+.glow{animation:glow 2.5s infinite}
+
+/* ============ 底部控制条 ============ */
+.bar{
+  position:absolute;bottom:0;left:0;right:0;
+  height:60px;
+  background:linear-gradient(transparent,rgba(0,0,0,.7));
+  display:flex;flex-direction:column;
+  justify-content:flex-end;
+  padding:0 20px 12px;
+  z-index:10;
+}
+.progress-track{
+  width:100%;height:2px;
+  background:rgba(255,255,255,.1);
+  border-radius:1px;
+  margin-bottom:10px;
+  cursor:pointer;
+}
+.progress-fill{
+  height:100%;width:0%;
+  background:#D4A843;
+  border-radius:1px;
+  transition:width .3s linear;
+}
+.bar-row{
+  display:flex;align-items:center;gap:14px;
+}
+.bar-row button{
+  background:none;border:none;
+  color:rgba(255,255,255,.5);
+  font-size:13px;cursor:pointer;
+  padding:2px 0;transition:color .2s;
+}
+.bar-row button:hover{color:#fff}
+.bar-row .play-btn{font-size:18px}
+.bar-row .timer{
+  margin-left:auto;
+  font-size:11px;color:rgba(255,255,255,.3);
+  font-variant-numeric:tabular-nums;
+}
+</style>
+</head>
+
+<body>
+<div class="screen">
+
+  <!-- 毛玻璃背景 -->
+  <div class="bg-layer">
+    <div class="bg-img" data-bg="1" style="background-image:url('../项目/政论时评/gallery/gallery_color_03.jpg')"></div>
+    <div class="bg-img" data-bg="2" style="background-image:url('../项目/政论时评/gallery/gallery_color_07.jpg')"></div>
+    <div class="bg-img" data-bg="3" style="background-image:url('../项目/政论时评/gallery/gallery_color_12.jpg')"></div>
+    <div class="bg-img" data-bg="4" style="background-image:url('../项目/政论时评/gallery/gallery_color_01.jpg')"></div>
+    <div class="bg-img" data-bg="5" style="background-image:url('../项目/政论时评/gallery/gallery_color_15.jpg')"></div>
+    <div class="bg-img" data-bg="6" style="background-image:url('../项目/政论时评/gallery/gallery_color_09.jpg')"></div>
+    <div class="bg-img" data-bg="7" style="background-image:url('../项目/政论时评/gallery/gallery_color_05.jpg')"></div>
+    <div class="bg-img" data-bg="8" style="background-image:url('../项目/政论时评/gallery/gallery_color_18.jpg')"></div>
+    <div class="bg-img" data-bg="9" style="background-image:url('../项目/政论时评/gallery/gallery_color_10.jpg')"></div>
+    <div class="bg-img" data-bg="10" style="background-image:url('../项目/政论时评/gallery/gallery_color_14.jpg')"></div>
+    <div class="bg-img" data-bg="11" style="background-image:url('../项目/政论时评/gallery/gallery_color_20.jpg')"></div>
+  </div>
+
+  <!-- S1：开场金句 — H1对仗 -->
+  <div class="scene" id="s1">
+    <div class="h1 gold center fade">储蓄节节高</div>
+    <div class="h1 center fade gap-m">负债层层压</div>
+  </div>
+
+  <!-- S2：叙事引入 — H2叙述 -->
+  <div class="scene" id="s2">
+    <div class="h2 center fade">2025年上半年</div>
+    <div class="h2 center fade gap-s">全国居民人均存款</div>
+    <div class="h2 gold center fade gap-s">再创历史新高</div>
+  </div>
+
+  <!-- S3：数据冲击 — H3标注 + H1数字 -->
+  <div class="scene" id="s3">
+    <div class="h3 center fade">人均存款余额</div>
+    <div class="h1 gold center pop gap-s">
+      <span class="num" id="counter1">0</span>
+      <span style="font-size:36px">元</span>
+    </div>
+  </div>
+
+  <!-- S4：追问 — H2逐字 -->
+  <div class="scene" id="s4">
+    <div class="h2 center">
+      <span class="ch">听</span><span class="ch">起</span><span class="ch">来</span><span class="ch">是</span><span class="ch">好</span><span class="ch">事</span><span class="ch">对</span><span class="ch">吧</span><span class="ch gold" style="font-size:56px">？</span>
+    </div>
+  </div>
+
+  <!-- S5：第一 — H2编号 + H2正反 -->
+  <div class="scene" id="s5">
+    <div class="h2 left fade" style="padding-left:12px">第一</div>
+    <div class="h3 left fade gap-m" style="padding-left:12px">表面是储蓄意愿增强</div>
+    <div class="h2 gold left fade gap-m" style="padding-left:12px">实际是消费信心不足</div>
+  </div>
+
+  <!-- S6：第二 — H2编号 + 对比 -->
+  <div class="scene" id="s6">
+    <div class="h2 left fade" style="padding-left:12px">第二</div>
+    <div class="h3 left fade gap-m" style="padding-left:12px">钱不是<span class="gold" style="font-weight:700">存</span>在银行里</div>
+    <div class="h2 gold left fade gap-m" style="padding-left:12px">而是躲在银行里</div>
+  </div>
+
+  <!-- S7：数据二 — H3标注 + H1数字 -->
+  <div class="scene" id="s7">
+    <div class="h3 center fade">上半年关闭门店</div>
+    <div class="h1 gold center pop gap-s">
+      <span class="num" id="counter2">0</span>
+      <span style="font-size:36px">万家</span>
+    </div>
+    <div class="h3 center fade gap-m">
+      每天 <span class="gold" style="font-weight:700;font-size:42px">8,800</span> 家
+    </div>
+  </div>
+
+  <!-- S8：第三 — H2对仗金句 -->
+  <div class="scene" id="s8">
+    <div class="h2 left fade" style="padding-left:12px">第三</div>
+    <div class="h3 left fade gap-m" style="padding-left:12px">经济好的时候</div>
+    <div class="h2 center fade gap-s">宁可犯错 不能错过</div>
+    <div class="h3 left fade gap-m" style="padding-left:12px">经济差的时候</div>
+    <div class="h2 gold center fade gap-s">宁可错过 不能犯错</div>
+  </div>
+
+  <!-- S9：转折 — H1冲击 -->
+  <div class="scene" id="s9">
+    <div class="h1 gold center pop">但这还并不是</div>
+    <div class="h1 center pop gap-s">最重要的</div>
+  </div>
+
+  <!-- S10：升华 — H2递进 -->
+  <div class="scene" id="s10">
+    <div class="h2 center fade">真正重要的是</div>
+    <div class="h1 gold center fade glow gap-m">守住现金流</div>
+    <div class="h2 center fade gap-m">多存钱 少欠钱</div>
+  </div>
+
+  <!-- S11：安全收尾 — H3弱化快速 -->
+  <div class="scene" id="s11">
+    <div class="h3 dim center fade">这也是短期震动</div>
+    <div class="h3 dim center fade gap-s">经过我们的不断努力</div>
+    <div class="h3 dim center fade gap-s">未来一定越来越好</div>
+  </div>
+
+  <!-- 控制条 -->
+  <div class="bar">
+    <div class="progress-track" onclick="seekTo(event)">
+      <div class="progress-fill" id="pbar"></div>
+    </div>
+    <div class="bar-row">
+      <button class="play-btn" onclick="togglePlay()" id="playBtn">&#9654;</button>
+      <button onclick="restart()">&#8634; 重播</button>
+      <span class="timer"><span id="elapsed">0:00</span> / <span id="total">0:00</span></span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   V3 时间轴引擎
+   动效仅3种：fade / pop / chars
+   ============================================================ */
+const timeline = [
+  ['s1',  0,   3.5, [
+    [0,   '#s1 .fade:nth-child(1)', 'fade'],
+    [0.8, '#s1 .fade:nth-child(2)', 'fade'],
+  ]],
+
+  ['s2',  3.5, 3.5, [
+    [0,   '#s2 .fade:nth-child(1)', 'fade'],
+    [0.4, '#s2 .fade:nth-child(2)', 'fade'],
+    [0.8, '#s2 .fade:nth-child(3)', 'fade'],
+  ]],
+
+  ['s3',  7,   4, [
+    [0,   '#s3 .fade', 'fade'],
+    [0.3, '#s3 .pop', 'pop'],
+    [0.5, '#counter1', 'counter:136800'],
+  ]],
+
+  ['s4',  11,  2.5, [
+    [0, '#s4 .ch', 'chars'],
+  ]],
+
+  ['s5',  13.5, 4, [
+    [0,   '#s5 .fade:nth-child(1)', 'fade'],
+    [0.6, '#s5 .fade:nth-child(2)', 'fade'],
+    [1.5, '#s5 .fade:nth-child(3)', 'fade'],
+  ]],
+
+  ['s6',  17.5, 3.5, [
+    [0,   '#s6 .fade:nth-child(1)', 'fade'],
+    [0.5, '#s6 .fade:nth-child(2)', 'fade'],
+    [1.2, '#s6 .fade:nth-child(3)', 'fade'],
+  ]],
+
+  ['s7',  21,  4, [
+    [0,   '#s7 .fade:nth-child(1)', 'fade'],
+    [0.3, '#s7 .pop', 'pop'],
+    [0.5, '#counter2', 'counter:161'],
+    [2,   '#s7 .fade:nth-child(3)', 'fade'],
+  ]],
+
+  ['s8',  25,  5, [
+    [0,   '#s8 .fade:nth-child(1)', 'fade'],
+    [0.4, '#s8 .fade:nth-child(2)', 'fade'],
+    [0.8, '#s8 .fade:nth-child(3)', 'fade'],
+    [2,   '#s8 .fade:nth-child(4)', 'fade'],
+    [2.4, '#s8 .fade:nth-child(5)', 'fade'],
+  ]],
+
+  ['s9',  30,  3, [
+    [0,   '#s9 .pop:nth-child(1)', 'pop'],
+    [0.5, '#s9 .pop:nth-child(2)', 'pop'],
+    [0.8, '#s9', 'shake'],
+  ]],
+
+  ['s10', 33,  5, [
+    [0,   '#s10 .fade:nth-child(1)', 'fade'],
+    [0.8, '#s10 .fade:nth-child(2)', 'fade'],
+    [2.5, '#s10 .fade:nth-child(3)', 'fade'],
+  ]],
+
+  ['s11', 38,  4, [
+    [0,   '#s11 .fade:nth-child(1)', 'fade'],
+    [0.5, '#s11 .fade:nth-child(2)', 'fade'],
+    [1,   '#s11 .fade:nth-child(3)', 'fade'],
+  ]],
+];
+
+const TOTAL = 42;
+let playing=false, startT=0, elapsed=0, raf=null;
+const fired = new Set();
+
+const bgMap = {s1:1,s2:2,s3:3,s4:4,s5:5,s6:6,s7:7,s8:8,s9:9,s10:10,s11:11};
+let curBg = 0;
+
+document.getElementById('total').textContent = fmt(TOTAL);
+
+function fmt(s){return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0')}
+
+function switchBg(n){
+  if(n===curBg)return;
+  curBg=n;
+  document.querySelectorAll('.bg-img').forEach(i=>i.classList.toggle('on',+i.dataset.bg===n));
+}
+
+function resetAll(){
+  document.querySelectorAll('.scene').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.show').forEach(e=>e.classList.remove('show'));
+  document.querySelectorAll('.shake').forEach(e=>e.classList.remove('shake'));
+  document.querySelectorAll('.num').forEach(e=>{if(e.id)e.textContent='0'});
+  document.querySelectorAll('.bg-img').forEach(i=>i.classList.remove('on'));
+  curBg=0;fired.clear();
+}
+
+function fire(sel,act){
+  if(act==='fade'||act==='pop'){
+    document.querySelectorAll(sel).forEach(e=>e.classList.add('show'));
+  }else if(act==='chars'){
+    document.querySelectorAll(sel).forEach((c,i)=>{
+      setTimeout(()=>c.classList.add('show'), i*90);
+    });
+  }else if(act.startsWith('counter:')){
+    const target=+act.split(':')[1];
+    const el=document.querySelector(sel);
+    let cur=0,step=0;const steps=40,inc=target/steps;
+    const t=setInterval(()=>{
+      step++;cur+=inc;
+      if(step>=steps){el.textContent=target.toLocaleString();clearInterval(t)}
+      else el.textContent=Math.floor(cur).toLocaleString();
+    },1200/steps);
+  }else if(act==='shake'){
+    document.querySelectorAll(sel).forEach(e=>{
+      e.classList.remove('shake');void e.offsetWidth;e.classList.add('shake');
+    });
+  }
+}
+
+function tick(){
+  if(!playing)return;
+  elapsed=(performance.now()-startT)/1000;
+  if(elapsed>=TOTAL){playing=false;document.getElementById('playBtn').innerHTML='&#9654;';return}
+  document.getElementById('pbar').style.width=(elapsed/TOTAL*100)+'%';
+  document.getElementById('elapsed').textContent=fmt(elapsed);
+
+  for(const[sid,st,dur,anims]of timeline){
+    const el=document.getElementById(sid);
+    if(elapsed>=st&&elapsed<st+dur){
+      if(!el.classList.contains('on')){
+        document.querySelectorAll('.scene.on').forEach(s=>s.classList.remove('on'));
+        el.classList.add('on');
+        switchBg(bgMap[sid]||1);
+      }
+      for(const[d,s,a]of anims){
+        const k=sid+s+a;
+        if(!fired.has(k)&&elapsed>=st+d){fired.add(k);fire(s,a)}
+      }
+    }
+  }
+  raf=requestAnimationFrame(tick);
+}
+
+function togglePlay(){
+  if(playing){playing=false;cancelAnimationFrame(raf);document.getElementById('playBtn').innerHTML='&#9654;'}
+  else{
+    if(elapsed>=TOTAL)restart();
+    playing=true;startT=performance.now()-elapsed*1000;
+    document.getElementById('playBtn').innerHTML='&#9646;&#9646;';
+    raf=requestAnimationFrame(tick);
+  }
+}
+
+function restart(){
+  playing=false;cancelAnimationFrame(raf);elapsed=0;resetAll();
+  document.getElementById('pbar').style.width='0%';
+  document.getElementById('elapsed').textContent='0:00';
+  document.getElementById('playBtn').innerHTML='&#9654;';
+  setTimeout(togglePlay,200);
+}
+
+function seekTo(e){
+  const r=e.currentTarget.getBoundingClientRect();
+  elapsed=(e.clientX-r.left)/r.width*TOTAL;
+  startT=performance.now()-elapsed*1000;
+  resetAll();
+  for(const[sid,st,dur,anims]of timeline){
+    if(elapsed>=st&&elapsed<st+dur){
+      document.getElementById(sid).classList.add('on');
+      switchBg(bgMap[sid]||1);
+      for(const[d,s,a]of anims){
+        if(elapsed>=st+d){fired.add(sid+s+a);fire(s,a)}
+      }
+    }
+  }
+}
+
+document.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();togglePlay()}});
+</script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>取消中考 — 政论时评</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"PingFang SC","Noto Sans SC",sans-serif}
+.screen{position:relative;width:405px;height:720px;overflow:hidden;background:#111}
+.bg-layer{position:absolute;inset:0;z-index:0;overflow:hidden}
+.bg-img{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(0.45) saturate(1.1);opacity:0;transition:opacity 1s ease}
+.bg-img.on{opacity:1}
+.scene{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:flex-start;padding:60px 20px 80px;opacity:0;pointer-events:none;transition:opacity .4s ease}
+.scene.on{opacity:1;pointer-events:auto}
+.t1{font-size:42px;font-weight:900;line-height:1.2}
+.t2{font-size:32px;font-weight:800;line-height:1.3}
+.t3{font-size:26px;font-weight:700;line-height:1.3}
+.big-num{font-size:72px;font-weight:900;line-height:1.1;margin:12px 0}
+.c-white{color:#fff}.c-yellow{color:#FFD600}.c-red{color:#FF3B30}
+.stroke{text-shadow:0 2px 8px rgba(0,0,0,.7),0 0 2px rgba(0,0,0,.9)}
+.block-yellow{display:inline-block;background:#FFD600;color:#111;padding:4px 18px;border-radius:4px;font-weight:900}
+.mt1{margin-top:12px}.mt2{margin-top:24px}
+.fade{opacity:0;transform:translateY(16px);transition:all .5s cubic-bezier(.23,1,.32,1)}
+.fade.show{opacity:1;transform:translateY(0)}
+.pop{opacity:0;transform:scale(.7);transition:all .4s cubic-bezier(.34,1.56,.64,1)}
+.pop.show{opacity:1;transform:scale(1)}
+.bar{position:absolute;bottom:0;left:0;right:0;z-index:10;background:linear-gradient(transparent,rgba(0,0,0,.6));padding:8px 12px 10px;display:flex;align-items:center;gap:8px;color:#fff;font-size:12px}
+.pbar-bg{flex:1;height:3px;background:rgba(255,255,255,.2);border-radius:1px;cursor:pointer}
+.pbar{height:100%;background:#FFD600;width:0%;border-radius:1px;transition:width .3s linear}
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="bg-layer">
+    <div class="bg-img" data-bg="1" style="background-image:url('../gallery/gallery_color_03.jpg')"></div>
+    <div class="bg-img" data-bg="2" style="background-image:url('../gallery/gallery_color_07.jpg')"></div>
+    <div class="bg-img" data-bg="3" style="background-image:url('../gallery/gallery_color_12.jpg')"></div>
+    <div class="bg-img" data-bg="4" style="background-image:url('../gallery/gallery_color_01.jpg')"></div>
+    <div class="bg-img" data-bg="5" style="background-image:url('../gallery/gallery_color_15.jpg')"></div>
+    <div class="bg-img" data-bg="6" style="background-image:url('../gallery/gallery_color_09.jpg')"></div>
+    <div class="bg-img" data-bg="7" style="background-image:url('../gallery/gallery_color_05.jpg')"></div>
+    <div class="bg-img" data-bg="8" style="background-image:url('../gallery/gallery_color_18.jpg')"></div>
+    <div class="bg-img" data-bg="9" style="background-image:url('../gallery/gallery_color_10.jpg')"></div>
+    <div class="bg-img" data-bg="10" style="background-image:url('../gallery/gallery_color_14.jpg')"></div>
+    <div class="bg-img" data-bg="11" style="background-image:url('../gallery/gallery_color_20.jpg')"></div>
+  </div>
+  <div class="scene" id="s1">
+    <div class="t1 fade"><span class="block-yellow">教育不是淘汰人的筛子</span></div>
+    <div class="t2 c-white stroke fade mt1">而是托举人的梯子</div>
+  </div>
+  <div class="scene" id="s2">
+    <div class="t2 c-white stroke fade">2025年浙江嵊泗县</div>
+    <div class="t2 c-white stroke fade mt1">率先取消中考选拔</div>
+    <div class="t2 c-yellow stroke fade mt1">266名全部录取 百分之百</div>
+  </div>
+  <div class="scene" id="s3">
+    <div class="t2 c-white stroke fade">为什么？四个字</div>
+    <div class="t1 pop mt1"><span class="block-yellow">供需逆转</span></div>
+  </div>
+  <div class="scene" id="s4">
+    <div class="t2 c-white stroke fade">第一 学生在消失</div>
+    <div class="t2 c-white stroke fade mt1">2016年出生1786万</div>
+    <div class="big-num c-red pop" id="counter1">0</div>
+    <div class="t2 c-white stroke fade mt1">2025年仅万</div>
+  </div>
+  <div class="scene" id="s5">
+    <div class="t2 c-white stroke fade">2024年关掉</div>
+    <div class="t2 c-white stroke fade mt1">2.11万所幼儿园</div>
+    <div class="big-num c-yellow pop" id="counter2">0</div>
+    <div class="t2 c-white stroke fade mt1">每天消失所</div>
+  </div>
+  <div class="scene" id="s6">
+    <div class="t2 c-white stroke fade">第二 学校在空</div>
+    <div class="t2 c-white stroke fade mt1">未来十年</div>
+    <div class="t2 c-yellow stroke fade mt1">适龄人口将减少50%-60%</div>
+  </div>
+  <div class="scene" id="s7">
+    <div class="t2 c-white stroke fade">学校不是被改革掉的</div>
+    <div class="t1 c-yellow stroke pop mt1">是被"空"掉的</div>
+  </div>
+  <div class="scene" id="s8">
+    <div class="t1 fade"><span class="block-yellow">第三</span></div>
+    <div class="t2 c-white stroke fade mt1">月薪五千觉得读大学没用</div>
+    <div class="t2 c-yellow stroke fade mt1">月薪五万告诉你</div>
+    <div class="t2 c-yellow stroke fade mt1">教育永远有用</div>
+  </div>
+  <div class="scene" id="s9">
+    <div class="t2 c-white stroke fade">但这还并不是</div>
+    <div class="t1 c-white stroke fade mt1">最重要的</div>
+  </div>
+  <div class="scene" id="s10">
+    <div class="t1 c-yellow stroke pop">教育是阳光</div>
+    <div class="t2 c-white stroke fade mt1">应该照到每一个人身上</div>
+  </div>
+  <div class="scene" id="s11">
+    <div class="t2 c-white stroke fade">15岁的失败不叫失败</div>
+    <div class="t2 c-yellow stroke fade mt1">叫还没开始</div>
+    <div class="t3 c-white stroke fade mt1" style="opacity:.6">相信经过不断努力</div>
+    <div class="t3 c-white stroke fade mt1" style="opacity:.6">教育一定越来越公平</div>
+    <div class="t3 c-white stroke fade mt1" style="opacity:.6">未来一定越来越好</div>
+  </div>
+  <div class="bar">
+    <span id="playBtn" onclick="togglePlay()" style="cursor:pointer">&#9654; 播放</span>
+    <span id="restartBtn" onclick="restart()" style="cursor:pointer">&#8634; 重播</span>
+    <div class="pbar-bg" onclick="seekTo(event)"><div class="pbar" id="pbar"></div></div>
+    <span><span id="elapsed">0:00</span> / <span id="total">0:00</span></span>
+  </div>
+</div>
+<script>
+const timeline = [
+  ['s1',  0.00,  3.17, [
+    [0.0, '#s1 .fade:nth-child(1)', 'fade'],
+    [0.4, '#s1 .fade:nth-child(2)', 'fade']
+  ]],
+  ['s2',  3.55,  6.43, [
+    [0.0, '#s2 .fade:nth-child(1)', 'fade'],
+    [0.4, '#s2 .fade:nth-child(2)', 'fade'],
+    [0.8, '#s2 .fade:nth-child(3)', 'fade']
+  ]],
+  ['s3', 10.00,  2.75, [
+    [0.0, '#s3 .fade:nth-child(1)', 'fade'],
+    [0.4, '#s3 .pop:nth-child(2)', 'pop']
+  ]],
+  ['s4', 12.99,  7.47, [
+    [0.0, '#s4 .fade:nth-child(1)', 'fade'],
+    [0.4, '#s4 .fade:nth-child(2)', 'fade'],
+    [0.8, '#s4 .pop:nth-child(3)', 'pop'],
+    [1.0, '#counter1', 'counter:792']
+  ]],
+  ['s5', 20.45,  4.05, [
+    [0.0, '#s5 .fade:nth-child(1)', 'fade'],
+    [0.4, '#s5 .fade:nth-child(2)', 'fade'],
+    [0.8, '#s5 .pop:nth-child(3)', 'pop'],
+    [1.0, '#counter2', 'counter:58']
+  ]],
+  ['s6', 24.75,  5.52, [
+    [0.0, '#s6 .fade:nth-child(1)', 'fade'],
+    [0.4, '#s6 .fade:nth-child(2)', 'fade'],
+    [0.8, '#s6 .fade:nth-child(3)', 'fade']
+  ]],
+  ['s7', 30.69,  2.16, [
+    [0.0, '#s7 .fade:nth-child(1)', 'fade'],
+    [0.4, '#s7 .pop:nth-child(2)', 'pop']
+  ]],
+  ['s8', 33.20,  5.41, [
+    [0.0, '#s8 .fade:nth-child(1)', 'fade'],
+    [0.4, '#s8 .fade:nth-child(2)', 'fade'],
+    [0.8, '#s8 .fade:nth-child(3)', 'fade'],
+    [1.2, '#s8 .fade:nth-child(4)', 'fade']
+  ]],
+  ['s9', 39.23,  6.61, [
+    [0.0, '#s9 .fade:nth-child(1)', 'fade'],
+    [0.4, '#s9 .fade:nth-child(2)', 'fade']
+  ]],
+  ['s10', 45.97,  2.77, [
+    [0.0, '#s10 .pop:nth-child(1)', 'pop'],
+    [0.4, '#s10 .fade:nth-child(2)', 'fade']
+  ]],
+  ['s11', 48.91,  7.76, [
+    [0.0, '#s11 .fade:nth-child(1)', 'fade'],
+    [0.4, '#s11 .fade:nth-child(2)', 'fade'],
+    [0.8, '#s11 .fade:nth-child(3)', 'fade'],
+    [1.2, '#s11 .fade:nth-child(4)', 'fade'],
+    [1.6, '#s11 .fade:nth-child(5)', 'fade']
+  ]],
+];
+
+const TOTAL=56.67;
+let playing=false,startT=0,elapsed=0,raf=null;
+const fired=new Set();
+const bgMap={s1:1,s2:2,s3:3,s4:4,s5:5,s6:6,s7:7,s8:8,s9:9,s10:10,s11:11};
+let curBg=0;
+
+document.getElementById('total').textContent=fmt(TOTAL);
+function fmt(s){return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0')}
+
+function switchBg(n){
+  if(n===curBg)return;curBg=n;
+  document.querySelectorAll('.bg-img').forEach(i=>i.classList.toggle('on',+i.dataset.bg===n));
+}
+
+function resetAll(){
+  document.querySelectorAll('.scene').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.show').forEach(e=>e.classList.remove('show'));
+  {const e=document.getElementById('counter1');if(e)e.textContent='0';}
+  {const e=document.getElementById('counter2');if(e)e.textContent='0';}
+  document.querySelectorAll('.bg-img').forEach(i=>i.classList.remove('on'));
+  curBg=0;fired.clear();
+}
+
+function fire(sel,act){
+  if(act==='fade'||act==='pop'){
+    document.querySelectorAll(sel).forEach(e=>e.classList.add('show'));
+  }else if(act.startsWith('counter:')){
+    const target=+act.split(':')[1],el=document.querySelector(sel);
+    let cur=0,step=0;const steps=40,inc=target/steps;
+    const t=setInterval(()=>{
+      step++;cur+=inc;
+      if(step>=steps){el.textContent=target.toLocaleString();clearInterval(t)}
+      else el.textContent=Math.floor(cur).toLocaleString();
+    },1200/steps);
+  }
+}
+
+function tick(){
+  if(!playing)return;
+  elapsed=(performance.now()-startT)/1000;
+  if(elapsed>=TOTAL){playing=false;document.getElementById('playBtn').textContent='\u25b6 \u64ad\u653e';return}
+  document.getElementById('pbar').style.width=(elapsed/TOTAL*100)+'%';
+  document.getElementById('elapsed').textContent=fmt(elapsed);
+  for(const[sid,st,dur,anims]of timeline){
+    const el=document.getElementById(sid);
+    if(elapsed>=st&&elapsed<st+dur){
+      if(!el.classList.contains('on')){
+        document.querySelectorAll('.scene.on').forEach(s=>s.classList.remove('on'));
+        el.classList.add('on');switchBg(bgMap[sid]||1);
+      }
+      for(const[d,s,a]of anims){
+        const k=sid+s+a;
+        if(!fired.has(k)&&elapsed>=st+d){fired.add(k);fire(s,a)}
+      }
+    }
+  }
+  raf=requestAnimationFrame(tick);
+}
+
+function togglePlay(){
+  if(playing){playing=false;cancelAnimationFrame(raf);document.getElementById('playBtn').textContent='\u25b6 \u64ad\u653e'}
+  else{
+    if(elapsed>=TOTAL)restart();
+    playing=true;startT=performance.now()-elapsed*1000;
+    document.getElementById('playBtn').textContent='\u23f8 \u6682\u505c';
+    raf=requestAnimationFrame(tick);
+  }
+}
+
+function restart(){
+  playing=false;cancelAnimationFrame(raf);elapsed=0;resetAll();
+  document.getElementById('pbar').style.width='0%';
+  document.getElementById('elapsed').textContent='0:00';
+  document.getElementById('playBtn').textContent='\u25b6 \u64ad\u653e';
+  setTimeout(togglePlay,200);
+}
+
+function seekTo(e){
+  const r=e.currentTarget.getBoundingClientRect();
+  elapsed=(e.clientX-r.left)/r.width*TOTAL;
+  startT=performance.now()-elapsed*1000;resetAll();
+  for(const[sid,st,dur,anims]of timeline){
+    if(elapsed>=st&&elapsed<st+dur){
+      document.getElementById(sid).classList.add('on');switchBg(bgMap[sid]||1);
+      for(const[d,s,a]of anims){if(elapsed>=st+d){fired.add(sid+s+a);fire(s,a)}}
+    }
+  }
+}
+
+document.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();togglePlay()}});
+</script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>时间轴校准工具</title>
+<style>
+body{
+  font-family:'PingFang SC','Microsoft YaHei',sans-serif;
+  max-width:900px;margin:40px auto;padding:20px;
+  background:#f5f5f5;
+}
+h1{color:#333;border-bottom:3px solid #FFD300;padding-bottom:10px}
+.container{background:#fff;padding:30px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
+.audio-player{
+  margin:20px 0;padding:20px;background:#f9f9f9;border-radius:5px;
+  border-left:4px solid #FFD300;
+}
+.audio-player audio{width:100%;margin:10px 0}
+.timer{
+  font-size:48px;font-weight:bold;color:#E8302B;
+  font-variant-numeric:tabular-nums;text-align:center;
+  margin:20px 0;padding:20px;background:#fff;border-radius:5px;
+  border:2px solid #E8302B;
+}
+.scenes{margin-top:30px}
+.scene{
+  padding:15px;margin:10px 0;background:#f9f9f9;border-radius:5px;
+  border-left:4px solid #ccc;cursor:pointer;transition:all 0.2s;
+}
+.scene:hover{background:#fff;border-left-color:#FFD300}
+.scene.active{background:#fffbea;border-left-color:#FFD300;font-weight:bold}
+.scene.marked{background:#e8f5e9;border-left-color:#4caf50}
+.scene-num{
+  display:inline-block;width:50px;font-weight:bold;color:#666;
+}
+.scene-text{color:#333;margin-left:10px}
+.scene-time{
+  float:right;color:#999;font-size:14px;
+  background:#fff;padding:2px 8px;border-radius:3px;
+}
+.scene-time.set{color:#4caf50;font-weight:bold}
+.controls{
+  margin:20px 0;display:flex;gap:10px;justify-content:center;
+}
+.controls button{
+  padding:12px 24px;font-size:16px;border:none;border-radius:5px;
+  cursor:pointer;background:#FFD300;color:#000;font-weight:bold;
+  transition:all 0.2s;
+}
+.controls button:hover{background:#E8C000;transform:translateY(-2px)}
+.controls button:active{transform:translateY(0)}
+.export{
+  margin-top:30px;padding:20px;background:#f0f0f0;border-radius:5px;
+}
+.export textarea{
+  width:100%;height:200px;font-family:monospace;font-size:12px;
+  padding:10px;border:1px solid #ddd;border-radius:3px;
+}
+.export button{
+  margin-top:10px;padding:10px 20px;background:#E8302B;color:#fff;
+  border:none;border-radius:5px;cursor:pointer;font-weight:bold;
+}
+.export button:hover{background:#c02820}
+.instructions{
+  background:#e3f2fd;padding:15px;border-radius:5px;
+  margin-bottom:20px;border-left:4px solid #2196f3;
+}
+.instructions h3{margin-top:0;color:#1976d2}
+.instructions ol{margin:10px 0;padding-left:25px}
+.instructions li{margin:5px 0}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>⏱️ 时间轴校准工具</h1>
+
+<div class="instructions">
+<h3>使用说明</h3>
+<ol>
+<li>点击"播放音频"，开始播放</li>
+<li>听到每句话<strong>开始说</strong>的时候，点击对应的场景行（或按数字键1-9/0/-/=）</li>
+<li>记录完所有时间点后，点击"生成Timeline代码"</li>
+<li>复制代码，粘贴到字幕demo_v5.html中</li>
+</ol>
+</div>
+
+<div class="audio-player">
+<strong>音频播放器</strong>
+<audio id="audio" controls>
+<source src="AIDOCS/人均存款_Kevin_1.5x.wav" type="audio/wav">
+</audio>
+<div class="timer" id="timer">0:00.00</div>
+</div>
+
+<div class="controls">
+<button onclick="resetAll()">🔄 重置所有时间点</button>
+<button onclick="exportTimeline()">📋 生成Timeline代码</button>
+</div>
+
+<div class="scenes" id="scenes">
+<!-- 场景列表由JS生成 -->
+</div>
+
+<div class="export" id="export" style="display:none">
+<h3>生成的Timeline代码</h3>
+<textarea id="output" readonly></textarea>
+<button onclick="copyCode()">复制代码</button>
+</div>
+</div>
+
+<script>
+const scenes = [
+  {id:'s1', num:1, text:'储蓄节节高，负债层层压', key:'1'},
+  {id:'s2', num:2, text:'2025年上半年，全国居民人均存款，再创历史新高', key:'2'},
+  {id:'s3', num:3, text:'人均存款余额，13万6800元', key:'3'},
+  {id:'s4', num:4, text:'听起来是好事，对吧？', key:'4'},
+  {id:'s5', num:5, text:'第一，表面是储蓄意愿增强，实际是消费信心不足', key:'5'},
+  {id:'s6', num:6, text:'第二，钱不是存在银行里，而是躲在银行里', key:'6'},
+  {id:'s7', num:7, text:'上半年关闭门店，161万家，每天8800家', key:'7'},
+  {id:'s8', num:8, text:'第三，经济好的时候，宁可犯错不能错过，经济差的时候，宁可错过不能犯错', key:'8'},
+  {id:'s9', num:9, text:'但这还并不是最重要的', key:'9'},
+  {id:'s10', num:10, text:'真正重要的是，守住现金流，多存钱少欠钱', key:'0'},
+  {id:'s11', num:11, text:'这也是短期震动，相信经过不断努力，未来一定越来越好', key:'-'},
+];
+
+const audio = document.getElementById('audio');
+const timer = document.getElementById('timer');
+const scenesDiv = document.getElementById('scenes');
+const timestamps = {};
+
+// 渲染场景列表
+scenes.forEach(s=>{
+  const div = document.createElement('div');
+  div.className = 'scene';
+  div.id = `scene-${s.id}`;
+  div.innerHTML = `
+    <span class="scene-num">S${s.num}</span>
+    <span class="scene-text">${s.text}</span>
+    <span class="scene-time" id="time-${s.id}">未设置</span>
+  `;
+  div.onclick = ()=>markTime(s.id);
+  scenesDiv.appendChild(div);
+});
+
+// 音频播放时更新计时器
+audio.addEventListener('timeupdate',()=>{
+  const t = audio.currentTime;
+  const m = Math.floor(t/60);
+  const s = (t%60).toFixed(2);
+  timer.textContent = `${m}:${s.padStart(5,'0')}`;
+});
+
+// 标记时间点
+function markTime(sid){
+  const t = audio.currentTime;
+  timestamps[sid] = t;
+  document.getElementById(`time-${sid}`).textContent = formatTime(t);
+  document.getElementById(`time-${sid}`).classList.add('set');
+  document.getElementById(`scene-${sid}`).classList.add('marked');
+}
+
+function formatTime(t){
+  return t.toFixed(2)+'s';
+}
+
+// 键盘快捷键
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'){e.preventDefault();audio.paused?audio.play():audio.pause()}
+  const scene = scenes.find(s=>s.key===e.key);
+  if(scene) markTime(scene.id);
+});
+
+// 重置
+function resetAll(){
+  if(!confirm('确定要重置所有时间点吗？'))return;
+  Object.keys(timestamps).forEach(k=>delete timestamps[k]);
+  document.querySelectorAll('.scene-time').forEach(el=>{
+    el.textContent='未设置';
+    el.classList.remove('set');
+  });
+  document.querySelectorAll('.scene').forEach(el=>el.classList.remove('marked'));
+  document.getElementById('export').style.display='none';
+}
+
+// 生成Timeline代码
+function exportTimeline(){
+  const sorted = scenes.map(s=>({
+    id:s.id,
+    num:s.num,
+    start:timestamps[s.id]||0
+  })).sort((a,b)=>a.start-b.start);
+
+  // 计算duration
+  const timeline = sorted.map((s,i)=>{
+    const nextStart = i<sorted.length-1 ? sorted[i+1].start : 37.25;
+    return {
+      ...s,
+      duration: nextStart - s.start
+    };
+  });
+
+  // 生成代码
+  let code = 'const timeline = [\n';
+  timeline.forEach(s=>{
+    code += `  ['${s.id}', ${s.start.toFixed(2)}, ${s.duration.toFixed(2)}, [\n`;
+
+    // 根据场景添加动画
+    if([1,4,9].includes(s.num)){
+      code += `    [0,    '#${s.id} .fade:nth-child(1)', 'fade'],\n`;
+      code += `    [0.4,  '#${s.id} .fade:nth-child(2)', 'fade'],\n`;
+    }else if([3,7].includes(s.num)){
+      code += `    [0,    '#${s.id} .fade', 'fade'],\n`;
+      code += `    [0.3,  '#${s.id} .pop', 'pop'],\n`;
+      code += `    [0.5,  '#counter${s.num===3?1:2}', 'counter:${s.num===3?136800:161}'],\n`;
+      if(s.num===7){
+        code += `    [1.6,  '#${s.id} .fade:nth-child(3)', 'fade'],\n`;
+      }
+    }else if([5,6].includes(s.num)){
+      code += `    [0,    '#${s.id} .fade:nth-child(1)', 'fade'],\n`;
+      code += `    [0.5,  '#${s.id} .fade:nth-child(2)', 'fade'],\n`;
+      code += `    [1.2,  '#${s.id} .fade:nth-child(3)', 'fade'],\n`;
+    }else if(s.num===8){
+      code += `    [0,    '#${s.id} .fade:nth-child(1)', 'fade'],\n`;
+      code += `    [0.4,  '#${s.id} .fade:nth-child(2)', 'fade'],\n`;
+      code += `    [0.8,  '#${s.id} .fade:nth-child(3)', 'fade'],\n`;
+      code += `    [2.5,  '#${s.id} .fade:nth-child(4)', 'fade'],\n`;
+      code += `    [2.9,  '#${s.id} .fade:nth-child(5)', 'fade'],\n`;
+    }else if(s.num===9){
+      code += `    [0,    '#${s.id} .pop:nth-child(1)', 'pop'],\n`;
+      code += `    [0.4,  '#${s.id} .pop:nth-child(2)', 'pop'],\n`;
+    }else{
+      code += `    [0,    '#${s.id} .fade:nth-child(1)', 'fade'],\n`;
+      code += `    [0.3,  '#${s.id} .fade:nth-child(2)', 'fade'],\n`;
+      code += `    [0.6,  '#${s.id} .fade:nth-child(3)', 'fade'],\n`;
+    }
+
+    code += `  ]],\n`;
+  });
+  code += '];\n\nconst TOTAL = 37.25;';
+
+  document.getElementById('output').value = code;
+  document.getElementById('export').style.display = 'block';
+  document.getElementById('output').scrollIntoView({behavior:'smooth'});
+}
+
+function copyCode(){
+  const textarea = document.getElementById('output');
+  textarea.select();
+  document.execCommand('copy');
+  alert('代码已复制到剪贴板！');
+}
+</script>
+</body>
+</html>

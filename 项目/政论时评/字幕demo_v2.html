@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>政论时评 - 字幕演示 V2</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  background:#000;
+  display:flex;justify-content:center;align-items:center;
+  min-height:100vh;
+  font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;
+}
+
+/* ============ 9:16 画布 ============ */
+.screen{
+  width:405px;height:720px;
+  position:relative;overflow:hidden;
+  /* 参照Banana Pro风格：暗底+顶部聚光灯 */
+  background:radial-gradient(ellipse 80% 50% at 50% 15%, #1a1a2e 0%, #0a0a0a 60%, #000 100%);
+  box-shadow:0 0 80px rgba(0,0,0,.9);
+}
+
+/* 聚光灯光晕（纯CSS） */
+.screen::before{
+  content:'';position:absolute;
+  top:-20%;left:10%;width:80%;height:60%;
+  background:radial-gradient(ellipse at center, rgba(255,255,255,.06) 0%, transparent 70%);
+  pointer-events:none;
+  z-index:2;
+}
+
+/* ============ 毛玻璃背景层 ============ */
+.bg-layer{
+  position:absolute;inset:0;z-index:0;
+  overflow:hidden;
+}
+.bg-img{
+  position:absolute;inset:-30px;/* 留出blur溢出空间 */
+  background-size:cover;
+  background-position:center;
+  filter:blur(24px) brightness(0.25) saturate(1.3);
+  opacity:0;
+  transition:opacity 1.2s ease;
+  /* Ken Burns 微动 */
+  animation:kenburns 12s ease-in-out infinite alternate;
+}
+.bg-img.on{opacity:1}
+
+@keyframes kenburns{
+  0%{transform:scale(1.05) translate(0,0)}
+  100%{transform:scale(1.15) translate(-8px, -5px)}
+}
+
+/* ============ 场景容器 ============ */
+.scene{
+  position:absolute;inset:0;z-index:1;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:60px 36px 130px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .5s ease;
+}
+.scene.on{opacity:1;pointer-events:auto}
+
+/* ============ 文字基础 ============ */
+.gold{color:#D4A843}
+.red{color:#D63031}
+.white{color:#EDEDED}
+.grey{color:#555}
+.cyan{color:#00CEC9}
+
+.w900{font-weight:900}
+.w700{font-weight:700}
+.w400{font-weight:400}
+.w300{font-weight:300}
+
+.center{text-align:center}
+.left{text-align:left;align-self:stretch}
+
+/* ============ 动画库 ============ */
+
+/* 1. 逐字出现（打字机） */
+.char{
+  display:inline-block;
+  opacity:0;
+  transform:translateY(12px);
+  transition:all .15s ease;
+}
+.char.show{opacity:1;transform:translateY(0)}
+
+/* 2. 整行淡入上移 */
+.line-fade{
+  opacity:0;
+  transform:translateY(24px);
+  transition:all .6s cubic-bezier(.23,1,.32,1);
+}
+.line-fade.show{opacity:1;transform:translateY(0)}
+
+/* 3. 缩放弹入 */
+.scale-in{
+  opacity:0;
+  transform:scale(.6);
+  transition:all .5s cubic-bezier(.34,1.56,.64,1);
+}
+.scale-in.show{opacity:1;transform:scale(1)}
+
+/* 4. 数字滚动（由JS控制） */
+.num-roll{
+  font-variant-numeric:tabular-nums;
+  letter-spacing:2px;
+}
+
+/* 5. 全屏闪红 */
+.flash-bg{
+  position:absolute;inset:0;
+  background:#D63031;
+  opacity:0;
+  transition:opacity .35s ease;
+  z-index:0;
+}
+.scene.on .flash-bg.show{opacity:1}
+
+/* 6. 震动 */
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-6px)}
+  40%{transform:translateX(6px)}
+  60%{transform:translateX(-4px)}
+  80%{transform:translateX(4px)}
+}
+.shake{animation:shake .4s ease}
+
+/* 7. 发光脉冲 */
+@keyframes glow-pulse{
+  0%,100%{text-shadow:0 0 10px rgba(212,168,67,.3)}
+  50%{text-shadow:0 0 30px rgba(212,168,67,.7), 0 0 60px rgba(212,168,67,.3)}
+}
+.glow{animation:glow-pulse 2s infinite}
+
+/* ============ 场景特化样式 ============ */
+
+/* 开场金句 */
+.opener-line{
+  font-size:38px;line-height:1.5;
+  letter-spacing:6px;
+  margin:8px 0;
+}
+
+/* 叙述体 */
+.narrate{
+  font-size:22px;line-height:1.8;
+  letter-spacing:1px;
+}
+
+/* 大数字 */
+.big-num{
+  font-size:68px;line-height:1.2;
+  letter-spacing:3px;
+}
+.big-num-label{
+  font-size:18px;line-height:1.6;
+  margin-bottom:12px;
+}
+.big-num-unit{
+  font-size:24px;margin-left:6px;
+}
+
+/* 编号 */
+.point-number{
+  font-size:44px;line-height:1;
+  margin-bottom:16px;
+}
+.point-body{
+  font-size:24px;line-height:1.7;
+  letter-spacing:1px;
+}
+
+/* 转折 */
+.turn-text{
+  font-size:40px;line-height:1.5;
+  letter-spacing:4px;
+  position:relative;z-index:1;
+}
+
+/* 升华 */
+.phi-line{
+  font-size:26px;line-height:2;
+  letter-spacing:2px;
+}
+
+/* 收尾 */
+.ending{
+  font-size:15px;line-height:2;
+  letter-spacing:1px;
+}
+
+/* ============ 底部控制条 ============ */
+.bar{
+  position:absolute;bottom:0;left:0;right:0;
+  height:110px;
+  background:linear-gradient(transparent, rgba(0,0,0,.85));
+  display:flex;flex-direction:column;
+  justify-content:flex-end;
+  padding:0 20px 16px;
+  z-index:10;
+}
+
+/* 进度条 */
+.progress-track{
+  width:100%;height:3px;
+  background:rgba(255,255,255,.15);
+  border-radius:2px;
+  margin-bottom:14px;
+  cursor:pointer;
+}
+.progress-fill{
+  height:100%;
+  background:#D63031;
+  border-radius:2px;
+  width:0%;
+  transition:width .3s linear;
+}
+
+/* 按钮行 */
+.bar-row{
+  display:flex;align-items:center;gap:14px;
+}
+.bar-row button{
+  background:none;border:none;
+  color:rgba(255,255,255,.7);
+  font-size:13px;cursor:pointer;
+  padding:4px 0;
+  transition:color .2s;
+}
+.bar-row button:hover{color:#fff}
+.bar-row .play-btn{font-size:20px}
+.bar-row .timer{
+  margin-left:auto;
+  font-size:12px;color:rgba(255,255,255,.4);
+  font-variant-numeric:tabular-nums;
+}
+</style>
+</head>
+
+<body>
+<div class="screen">
+
+  <!-- 毛玻璃背景图层 -->
+  <div class="bg-layer">
+    <div class="bg-img" data-bg="1" style="background-image:url('../项目/政论时评/gallery/gallery_color_03.jpg')"></div>
+    <div class="bg-img" data-bg="2" style="background-image:url('../项目/政论时评/gallery/gallery_color_07.jpg')"></div>
+    <div class="bg-img" data-bg="3" style="background-image:url('../项目/政论时评/gallery/gallery_color_12.jpg')"></div>
+    <div class="bg-img" data-bg="4" style="background-image:url('../项目/政论时评/gallery/gallery_color_01.jpg')"></div>
+    <div class="bg-img" data-bg="5" style="background-image:url('../项目/政论时评/gallery/gallery_color_15.jpg')"></div>
+    <div class="bg-img" data-bg="6" style="background-image:url('../项目/政论时评/gallery/gallery_color_09.jpg')"></div>
+    <div class="bg-img" data-bg="7" style="background-image:url('../项目/政论时评/gallery/gallery_color_05.jpg')"></div>
+    <div class="bg-img" data-bg="8" style="background-image:url('../项目/政论时评/gallery/gallery_color_18.jpg')"></div>
+    <div class="bg-img" data-bg="9" style="background-image:url('../项目/政论时评/gallery/gallery_color_10.jpg')"></div>
+    <div class="bg-img" data-bg="10" style="background-image:url('../项目/政论时评/gallery/gallery_color_14.jpg')"></div>
+    <div class="bg-img" data-bg="11" style="background-image:url('../项目/政论时评/gallery/gallery_color_20.jpg')"></div>
+  </div>
+
+  <!-- ===== 场景 1：开场金句（对仗） ===== -->
+  <div class="scene" id="s1">
+    <div class="opener-line gold w900 center line-fade">储蓄节节高</div>
+    <div class="opener-line red w900 center line-fade">负债层层压</div>
+  </div>
+
+  <!-- ===== 场景 2：叙事引入 ===== -->
+  <div class="scene" id="s2">
+    <div class="narrate white w400 center line-fade">
+      2025年上半年<br>
+      全国居民人均存款余额<br>
+      <span class="gold w700">再创历史新高</span>
+    </div>
+  </div>
+
+  <!-- ===== 场景 3：数据冲击 ===== -->
+  <div class="scene" id="s3">
+    <div class="big-num-label grey w300 center line-fade">全国居民人均存款余额</div>
+    <div class="big-num red w900 center scale-in">
+      <span class="num-roll" id="counter1">0</span><span class="big-num-unit">元</span>
+    </div>
+  </div>
+
+  <!-- ===== 场景 4：追问 ===== -->
+  <div class="scene" id="s4">
+    <div class="narrate white w400 center" style="font-size:28px">
+      <span class="char">听</span><span class="char">起</span><span class="char">来</span><span class="char">是</span><span class="char">好</span><span class="char">事</span><span class="char">对</span><span class="char">吧</span><span class="char gold w700" style="font-size:32px">？</span>
+    </div>
+  </div>
+
+  <!-- ===== 场景 5：第一 ===== -->
+  <div class="scene" id="s5">
+    <div class="left" style="padding-left:8px">
+      <div class="point-number cyan w900 scale-in">第一</div>
+      <div class="point-body white w400 line-fade">
+        表面上看<br>是储蓄意愿增强
+      </div>
+      <div class="point-body gold w700 line-fade" style="margin-top:20px">
+        实际上<br>是消费信心不足
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 场景 6：第二 ===== -->
+  <div class="scene" id="s6">
+    <div class="left" style="padding-left:8px">
+      <div class="point-number cyan w900 scale-in">第二</div>
+      <div class="point-body white w400 line-fade">
+        钱不是<span class="gold w700">存</span>在银行里
+      </div>
+      <div class="point-body red w700 line-fade" style="margin-top:20px;font-size:28px">
+        而是<em>躲</em>在银行里
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 场景 7：数据二 ===== -->
+  <div class="scene" id="s7">
+    <div class="big-num-label grey w300 center line-fade">上半年关闭门店数量</div>
+    <div class="big-num red w900 center scale-in">
+      <span class="num-roll" id="counter2">0</span><span class="big-num-unit">万家</span>
+    </div>
+    <div class="narrate grey w300 center line-fade" style="margin-top:20px;font-size:16px">
+      相当于每天 <span class="red w700" style="font-size:22px">8,800</span> 家
+    </div>
+  </div>
+
+  <!-- ===== 场景 8：第三 ===== -->
+  <div class="scene" id="s8">
+    <div class="left" style="padding-left:8px">
+      <div class="point-number cyan w900 scale-in">第三</div>
+      <div class="point-body white w400 line-fade">
+        经济活跃的时候
+      </div>
+      <div class="point-body gold w700 line-fade" style="margin-top:12px;font-size:26px">
+        宁可犯错 也不能错过
+      </div>
+      <div class="point-body white w400 line-fade" style="margin-top:20px">
+        经济差的时候
+      </div>
+      <div class="point-body red w700 line-fade" style="margin-top:12px;font-size:26px">
+        宁可错过 也不能犯错
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 场景 9：转折 ===== -->
+  <div class="scene" id="s9">
+    <div class="turn-text red w900 center scale-in">
+      但这还并不是<br>最重要的
+    </div>
+  </div>
+
+  <!-- ===== 场景 10：升华 ===== -->
+  <div class="scene" id="s10">
+    <div class="phi-line white w400 center line-fade">真正重要的是</div>
+    <div class="phi-line gold w900 center line-fade glow" style="font-size:34px;margin:24px 0">
+      守住现金流
+    </div>
+    <div class="phi-line white w400 center line-fade">多存钱 少欠钱</div>
+    <div class="phi-line white w400 center line-fade" style="margin-top:12px">
+      做好<span class="red w700">最坏的打算</span>
+    </div>
+  </div>
+
+  <!-- ===== 场景 11：安全收尾 ===== -->
+  <div class="scene" id="s11">
+    <div class="ending grey w300 center line-fade">
+      当然这也是短期震动期<br>
+      相信经过我们的不断努力<br>
+      我们的未来收入一定会越来越高<br>
+      物价越来越低<br>
+      生活越来越幸福<br>
+      越来越美好
+    </div>
+  </div>
+
+  <!-- ===== 底部控制条 ===== -->
+  <div class="bar">
+    <div class="progress-track" onclick="seekTo(event)">
+      <div class="progress-fill" id="pbar"></div>
+    </div>
+    <div class="bar-row">
+      <button class="play-btn" onclick="togglePlay()" id="playBtn">&#9654;</button>
+      <button onclick="restart()">&#8634; 重播</button>
+      <span class="timer"><span id="elapsed">0:00</span> / <span id="total">0:00</span></span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   时间轴引擎 —— 模拟 TTS 播放节奏
+   每个场景定义：开始时间(s)、内部动画时间轴
+   ============================================================ */
+const timeline = [
+  // [sceneId, startSec, durationSec, animations[]]
+  // animations: [delaySec, selector, action]
+  // action: 'fade' | 'scale' | 'chars' | 'counter:target' | 'flash' | 'shake'
+
+  ['s1',  0,   3.5, [
+    [0,   '#s1 .line-fade:nth-child(1)', 'fade'],
+    [0.8, '#s1 .line-fade:nth-child(2)', 'fade'],
+  ]],
+
+  ['s2',  3.5, 3.5, [
+    [0, '#s2 .line-fade', 'fade'],
+  ]],
+
+  ['s3',  7,   4, [
+    [0,   '#s3 .line-fade', 'fade'],
+    [0.3, '#s3 .scale-in', 'scale'],
+    [0.5, '#counter1', 'counter:136800'],
+  ]],
+
+  ['s4',  11,  2.5, [
+    [0, '#s4 .char', 'chars'],
+  ]],
+
+  ['s5',  13.5, 4, [
+    [0,   '#s5 .scale-in', 'scale'],
+    [0.4, '#s5 .line-fade:nth-child(2)', 'fade'],
+    [1.5, '#s5 .line-fade:nth-child(3)', 'fade'],
+  ]],
+
+  ['s6',  17.5, 3.5, [
+    [0,   '#s6 .scale-in', 'scale'],
+    [0.4, '#s6 .line-fade:nth-child(2)', 'fade'],
+    [1.2, '#s6 .line-fade:nth-child(3)', 'fade'],
+  ]],
+
+  ['s7',  21,  4, [
+    [0,   '#s7 .line-fade:nth-child(1)', 'fade'],
+    [0.3, '#s7 .scale-in', 'scale'],
+    [0.5, '#counter2', 'counter:161'],
+    [2,   '#s7 .line-fade:nth-child(3)', 'fade'],
+  ]],
+
+  ['s8',  25,  5, [
+    [0,   '#s8 .scale-in', 'scale'],
+    [0.4, '#s8 .line-fade:nth-child(2)', 'fade'],
+    [1,   '#s8 .line-fade:nth-child(3)', 'fade'],
+    [2,   '#s8 .line-fade:nth-child(4)', 'fade'],
+    [2.8, '#s8 .line-fade:nth-child(5)', 'fade'],
+  ]],
+
+  ['s9',  30,  3, [
+    [0,   '#s9 .scale-in', 'scale'],
+    [0.2, '#s9 .scale-in', 'shake'],
+  ]],
+
+  ['s10', 33,  5, [
+    [0,   '#s10 .line-fade:nth-child(1)', 'fade'],
+    [0.8, '#s10 .line-fade:nth-child(2)', 'fade'],
+    [2,   '#s10 .line-fade:nth-child(3)', 'fade'],
+    [3,   '#s10 .line-fade:nth-child(4)', 'fade'],
+  ]],
+
+  ['s11', 38,  4, [
+    [0, '#s11 .line-fade', 'fade'],
+  ]],
+];
+
+const TOTAL_DURATION = 42; // 总时长（秒）
+
+let playing = false;
+let startTime = 0;
+let elapsed = 0;
+let raf = null;
+let firedAnims = new Set();
+
+// 初始化总时长显示
+document.getElementById('total').textContent = formatTime(TOTAL_DURATION);
+
+function formatTime(s){
+  const m = Math.floor(s/60);
+  const sec = Math.floor(s%60);
+  return m+':'+String(sec).padStart(2,'0');
+}
+
+// 场景→背景图编号映射（11个场景对应11张图）
+const sceneBgMap = {s1:1,s2:2,s3:3,s4:4,s5:5,s6:6,s7:7,s8:8,s9:9,s10:10,s11:11};
+let currentBg = 0;
+
+// 切换背景图
+function switchBg(bgNum){
+  if(bgNum === currentBg) return;
+  currentBg = bgNum;
+  document.querySelectorAll('.bg-img').forEach(img => {
+    img.classList.toggle('on', parseInt(img.dataset.bg) === bgNum);
+  });
+}
+
+// 重置所有动画状态
+function resetAll(){
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.show').forEach(el => el.classList.remove('show'));
+  document.querySelectorAll('.shake').forEach(el => el.classList.remove('shake'));
+  document.querySelectorAll('.num-roll').forEach(el => el.textContent = '0');
+  document.querySelectorAll('.bg-img').forEach(img => img.classList.remove('on'));
+  currentBg = 0;
+  firedAnims.clear();
+}
+
+// 执行单个动画
+function fireAnim(selector, action){
+  if(action === 'fade' || action === 'scale'){
+    document.querySelectorAll(selector).forEach(el => el.classList.add('show'));
+  }
+  else if(action === 'chars'){
+    const chars = document.querySelectorAll(selector);
+    chars.forEach((c, i) => {
+      setTimeout(() => c.classList.add('show'), i * 80);
+    });
+  }
+  else if(action.startsWith('counter:')){
+    const target = parseInt(action.split(':')[1]);
+    const el = document.querySelector(selector);
+    animateNum(el, target);
+  }
+  else if(action === 'flash'){
+    document.querySelectorAll(selector).forEach(el => el.classList.add('show'));
+  }
+  else if(action === 'shake'){
+    document.querySelectorAll(selector).forEach(el => {
+      el.classList.remove('shake');
+      void el.offsetWidth; // reflow
+      el.classList.add('shake');
+    });
+  }
+}
+
+// 数字滚动
+function animateNum(el, target){
+  const dur = 1200;
+  const steps = 40;
+  const inc = target / steps;
+  let cur = 0, step = 0;
+  const t = setInterval(() => {
+    step++;
+    cur += inc;
+    if(step >= steps){
+      el.textContent = target.toLocaleString();
+      clearInterval(t);
+    } else {
+      el.textContent = Math.floor(cur).toLocaleString();
+    }
+  }, dur/steps);
+}
+
+// 主循环
+function tick(){
+  if(!playing) return;
+  elapsed = (performance.now() - startTime) / 1000;
+
+  if(elapsed >= TOTAL_DURATION){
+    playing = false;
+    document.getElementById('playBtn').innerHTML = '&#9654;';
+    return;
+  }
+
+  // 更新进度条
+  document.getElementById('pbar').style.width = (elapsed/TOTAL_DURATION*100)+'%';
+  document.getElementById('elapsed').textContent = formatTime(elapsed);
+
+  // 检查时间轴
+  for(const [sceneId, start, dur, anims] of timeline){
+    const sceneEl = document.getElementById(sceneId);
+
+    // 场景进入
+    if(elapsed >= start && elapsed < start + dur){
+      if(!sceneEl.classList.contains('on')){
+        // 关闭其他场景
+        document.querySelectorAll('.scene.on').forEach(s => s.classList.remove('on'));
+        sceneEl.classList.add('on');
+        // 切换毛玻璃背景图
+        switchBg(sceneBgMap[sceneId] || 1);
+      }
+
+      // 触发动画
+      for(const [delay, sel, act] of anims){
+        const key = sceneId + sel + act;
+        if(!firedAnims.has(key) && elapsed >= start + delay){
+          firedAnims.add(key);
+          fireAnim(sel, act);
+        }
+      }
+    }
+  }
+
+  raf = requestAnimationFrame(tick);
+}
+
+// 播放/暂停
+function togglePlay(){
+  if(playing){
+    playing = false;
+    cancelAnimationFrame(raf);
+    document.getElementById('playBtn').innerHTML = '&#9654;';
+  } else {
+    if(elapsed >= TOTAL_DURATION) restart();
+    playing = true;
+    startTime = performance.now() - elapsed * 1000;
+    document.getElementById('playBtn').innerHTML = '&#9646;&#9646;';
+    raf = requestAnimationFrame(tick);
+  }
+}
+
+// 重播
+function restart(){
+  playing = false;
+  cancelAnimationFrame(raf);
+  elapsed = 0;
+  resetAll();
+  document.getElementById('pbar').style.width = '0%';
+  document.getElementById('elapsed').textContent = '0:00';
+  document.getElementById('playBtn').innerHTML = '&#9654;';
+  // 自动开始
+  setTimeout(togglePlay, 200);
+}
+
+// 进度条点击跳转
+function seekTo(e){
+  const rect = e.currentTarget.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  elapsed = pct * TOTAL_DURATION;
+  startTime = performance.now() - elapsed * 1000;
+  resetAll();
+  // 重新触发已过的动画
+  for(const [sceneId, start, dur, anims] of timeline){
+    if(elapsed >= start && elapsed < start + dur){
+      document.getElementById(sceneId).classList.add('on');
+      switchBg(sceneBgMap[sceneId] || 1);
+      for(const [delay, sel, act] of anims){
+        if(elapsed >= start + delay){
+          firedAnims.add(sceneId+sel+act);
+          fireAnim(sel, act);
+        }
+      }
+    }
+  }
+}
+
+// 键盘
+document.addEventListener('keydown', e => {
+  if(e.code === 'Space'){ e.preventDefault(); togglePlay(); }
+});
+</script>
+</body>
+</html>
