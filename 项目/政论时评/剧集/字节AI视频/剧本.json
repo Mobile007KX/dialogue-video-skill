@@ -1,0 +1,243 @@
+{
+  "title": "Seedance 2.0：导演的神器，还是影视民工的屠刀？",
+  "voice": "Kevin",
+  "speed": 1.5,
+  "tts_text": "Seedance 2.0，导演的神器，还是影视民工的屠刀？2月12日，字节跳动发布Seedance 2.0。影视飓风Tim连说六遍恐怖。马斯克说，发展太快。贾樟柯说，确实厉害。这些，都只是开场白。真正的冲击，还在后面。以前做一条短视频，一到三天。现在，60秒。以前一部微短剧，50人三个月。现在，10人10天。Seedance可用率90%，行业平均才20%。全球16亿创作者账号，每人产量翻十倍、五十倍。内容会怎样？泛滥。过剩。烂大街。但这还不是重点。重点是算力。你和ChatGPT聊一次天，耗电大概等于微波炉转不到8秒。但生成一条5秒AI视频，等于微波炉转1小时。一条视频，相当于几千次聊天。以前烧算力的是码农，几十万人。以后烧算力的是全球网民，几十亿人。如果每天都在生成视频，那是什么规模？国际能源署预测，到2030年，全球数据中心用电量，将接近日本全国用电。新增AI电力需求，相当于7500万美国家庭。这不是流量战争，这是电力战争。那谁在闷声发财？2024年，字节买了23万片英伟达GPU，全球第二，仅次于微软的48.5万片。2025年，字节计划再砸70亿美元。英伟达2025财年营收1305亿美元，增长114%。净利润729亿美元，增长145%。数据中心业务，占88%。淘金热里，最赚钱的从来不是挖金子的人，是卖铲子的。你以为是内容革命，实际上，是算力盛宴。全民生成视频的狂欢，最后变成英伟达的订单，和全球电网的账单。所以你问我，Seedance是神器还是屠刀？都不是。它是黄仁勋的提款机。",
+  "scenes": [
+    {
+      "id": "s1",
+      "type": "hook",
+      "lines": [
+        {"text": "Seedance 2.0", "style": "block-yellow", "anim": "pop"},
+        {"text": "导演的神器", "style": "white", "anim": "fade"},
+        {"text": "还是影视民工的屠刀？", "style": "white-stroke", "anim": "fade"}
+      ]
+    },
+    {
+      "id": "s2",
+      "type": "fact",
+      "lines": [
+        {"text": "2月12日 字节跳动发布", "style": "light", "anim": "fade"},
+        {"text": "Tim连说六遍\"恐怖\"", "style": "white", "anim": "fade"},
+        {"text": "马斯克说 发展太快", "style": "white", "anim": "fade"},
+        {"text": "贾樟柯说 确实厉害", "style": "yellow", "anim": "fade"}
+      ]
+    },
+    {
+      "id": "s3",
+      "type": "transition",
+      "lines": [
+        {"text": "这些", "style": "light", "anim": "fade"},
+        {"text": "都只是开场白", "style": "white", "anim": "fade"},
+        {"text": "真正的冲击", "style": "white-stroke", "anim": "fade"},
+        {"text": "还在后面", "style": "yellow", "anim": "fade"}
+      ]
+    },
+    {
+      "id": "s4",
+      "type": "contrast",
+      "lines": [
+        {"text": "以前一条短视频", "style": "light", "anim": "fade"},
+        {"text": "一到三天", "style": "white", "anim": "fade"},
+        {"text": "现在", "style": "light", "anim": "fade"},
+        {"text": "60秒", "style": "yellow", "anim": "pop", "font_size": 56}
+      ]
+    },
+    {
+      "id": "s5",
+      "type": "contrast",
+      "lines": [
+        {"text": "以前一部微短剧", "style": "light", "anim": "fade"},
+        {"text": "50人三个月", "style": "white", "anim": "fade"},
+        {"text": "现在", "style": "light", "anim": "fade"},
+        {"text": "10人10天", "style": "yellow", "anim": "pop", "font_size": 48}
+      ]
+    },
+    {
+      "id": "s6",
+      "type": "data",
+      "lines": [
+        {"text": "Seedance可用率", "style": "white", "anim": "fade"},
+        {"text": "行业平均才20%", "style": "light", "anim": "fade"}
+      ],
+      "counter": {
+        "id": "counter1",
+        "target": 90,
+        "suffix": "%",
+        "label": "",
+        "color": "yellow"
+      }
+    },
+    {
+      "id": "s7",
+      "type": "data",
+      "lines": [
+        {"text": "全球创作者账号", "style": "white", "anim": "fade"},
+        {"text": "每人产量翻十倍 五十倍", "style": "light", "anim": "fade"}
+      ],
+      "counter": {
+        "id": "counter2",
+        "target": 16,
+        "suffix": "亿",
+        "label": "",
+        "color": "yellow"
+      }
+    },
+    {
+      "id": "s8",
+      "type": "emphasis",
+      "lines": [
+        {"text": "内容会怎样？", "style": "white", "anim": "fade"},
+        {"text": "泛滥", "style": "yellow", "anim": "pop"},
+        {"text": "过剩", "style": "yellow", "anim": "pop"},
+        {"text": "烂大街", "style": "red", "anim": "pop"}
+      ]
+    },
+    {
+      "id": "s9",
+      "type": "transition",
+      "lines": [
+        {"text": "但这还不是重点", "style": "light", "anim": "fade"},
+        {"text": "重点是", "style": "white", "anim": "fade"},
+        {"text": "算力", "style": "block-yellow", "anim": "pop"}
+      ]
+    },
+    {
+      "id": "s10",
+      "type": "contrast",
+      "lines": [
+        {"text": "你和ChatGPT聊一次天", "style": "white", "anim": "fade"},
+        {"text": "耗电等于", "style": "light", "anim": "fade"},
+        {"text": "微波炉转不到8秒", "style": "yellow", "anim": "fade"}
+      ]
+    },
+    {
+      "id": "s11",
+      "type": "contrast",
+      "lines": [
+        {"text": "但生成一条5秒AI视频", "style": "white", "anim": "fade"},
+        {"text": "等于微波炉转", "style": "light", "anim": "fade"},
+        {"text": "1小时", "style": "red", "anim": "pop", "font_size": 64}
+      ]
+    },
+    {
+      "id": "s12",
+      "type": "key",
+      "lines": [
+        {"text": "一条视频", "style": "white", "anim": "fade"},
+        {"text": "相当于几千次聊天", "style": "yellow", "anim": "fade"}
+      ]
+    },
+    {
+      "id": "s13",
+      "type": "contrast",
+      "lines": [
+        {"text": "以前烧算力的是码农", "style": "light", "anim": "fade"},
+        {"text": "几十万人", "style": "white", "anim": "fade"},
+        {"text": "以后烧算力的是全球网民", "style": "white", "anim": "fade"},
+        {"text": "几十亿人", "style": "red", "anim": "pop", "font_size": 56}
+      ]
+    },
+    {
+      "id": "s14",
+      "type": "data",
+      "lines": [
+        {"text": "国际能源署预测", "style": "light", "anim": "fade"},
+        {"text": "2030年数据中心用电", "style": "white", "anim": "fade"},
+        {"text": "接近日本全国用电", "style": "yellow", "anim": "fade"},
+        {"text": "新增AI电力需求", "style": "light", "anim": "fade"}
+      ],
+      "counter": {
+        "id": "counter3",
+        "target": 7500,
+        "suffix": "万",
+        "label": "相当于",
+        "color": "red"
+      }
+    },
+    {
+      "id": "s15",
+      "type": "key",
+      "lines": [
+        {"text": "这不是流量战争", "style": "white", "anim": "fade"},
+        {"text": "这是电力战争", "style": "block-accent", "anim": "pop"}
+      ]
+    },
+    {
+      "id": "s16",
+      "type": "transition",
+      "lines": [
+        {"text": "那谁在", "style": "light", "anim": "fade"},
+        {"text": "闷声发财？", "style": "white-stroke", "anim": "fade"}
+      ]
+    },
+    {
+      "id": "s17",
+      "type": "data",
+      "lines": [
+        {"text": "2024 字节买了", "style": "light", "anim": "fade"},
+        {"text": "英伟达GPU", "style": "white", "anim": "fade"},
+        {"text": "全球第二", "style": "yellow", "anim": "fade"}
+      ],
+      "counter": {
+        "id": "counter4",
+        "target": 23,
+        "suffix": "万片",
+        "label": "",
+        "color": "yellow"
+      }
+    },
+    {
+      "id": "s18",
+      "type": "data",
+      "lines": [
+        {"text": "英伟达2025财年", "style": "light", "anim": "fade"},
+        {"text": "数据中心业务占88%", "style": "white", "anim": "fade"}
+      ],
+      "counter": {
+        "id": "counter5",
+        "target": 1305,
+        "suffix": "亿美元",
+        "label": "营收",
+        "color": "yellow"
+      }
+    },
+    {
+      "id": "s19",
+      "type": "key",
+      "lines": [
+        {"text": "淘金热里", "style": "light", "anim": "fade"},
+        {"text": "最赚钱的", "style": "white", "anim": "fade"},
+        {"text": "从来不是挖金子的人", "style": "white", "anim": "fade"},
+        {"text": "是卖铲子的", "style": "block-yellow", "anim": "pop"}
+      ]
+    },
+    {
+      "id": "s20",
+      "type": "key",
+      "lines": [
+        {"text": "你以为是内容革命", "style": "light", "anim": "fade"},
+        {"text": "实际上", "style": "white", "anim": "fade"},
+        {"text": "是算力盛宴", "style": "yellow", "anim": "pop", "font_size": 48}
+      ]
+    },
+    {
+      "id": "s21",
+      "type": "closing",
+      "lines": [
+        {"text": "全民生成视频的狂欢", "style": "white", "anim": "fade"},
+        {"text": "最后变成英伟达的订单", "style": "light", "anim": "fade"},
+        {"text": "和全球电网的账单", "style": "dim", "anim": "fade"}
+      ]
+    },
+    {
+      "id": "s22",
+      "type": "closing",
+      "lines": [
+        {"text": "Seedance是神器还是屠刀？", "style": "white", "anim": "fade"},
+        {"text": "都不是", "style": "light", "anim": "fade"},
+        {"text": "它是黄仁勋的提款机", "style": "yellow", "anim": "pop", "font_size": 44}
+      ]
+    }
+  ]
+}
